@@ -13,8 +13,10 @@ buildKonfig = "0.18.0"
 composeHotReload = "1.0.0"
 composeMultiplatform = "1.10.3"
 junit = "4.13.2"
-koin = "4.1.1"
+koin = "4.2.1"
+ktor = "2.3.12"
 kotlin = "2.3.20"
+kotlinxSerializationJson = "1.7.1"
 kotlinx-coroutines = "1.10.2"
 material3 = "1.10.0-alpha05"
 
@@ -45,8 +47,10 @@ kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-s
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
+#buildKonfig
 buildKonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildKonfig" }
 composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+

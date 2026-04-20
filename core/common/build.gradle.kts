@@ -14,7 +14,34 @@ val secretsProperties = Properties().apply {
         secretsFile.inputStream().use(::load)
     }
 }
+// 1. Load the properties file safely
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.inputStream())
+}
 
+// 2. Configure BuildKonfig to generate the BuildKonfig object
+buildkonfig {
+    // Must match your app's namespace
+    packageName = "com.samduka.dukacred"
+
+    defaultConfigs {
+        // Supabase URL
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "SUPABASE_URL",
+            localProperties.getProperty("SUPABASE_URL") ?: "MISSING_URL"
+        )
+
+        // Supabase Anon Key
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "SUPABASE_ANON_KEY",
+            localProperties.getProperty("SUPABASE_ANON_KEY") ?: "MISSING_KEY"
+        )
+    }
+}
 kotlin {
     androidTarget {
         compilerOptions {
