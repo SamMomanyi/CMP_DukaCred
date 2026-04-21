@@ -1,24 +1,12 @@
-import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
-import java.util.Properties
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.buildKonfig)
-}
-
-val secretsProperties = Properties().apply {
-    val secretsFile = rootProject.file("secrets/secrets.properties")
-    if (secretsFile.exists()) {
-        secretsFile.inputStream().use(::load)
-    }
 }
 
 kotlin {
     androidTarget {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
         }
     }
 
@@ -32,11 +20,31 @@ kotlin {
         }
     }
 
-    jvm()
+    jvm() // For the Desktop app
 
     sourceSets {
         commonMain.dependencies {
+            // Core concurrency
             implementation(libs.kotlinx.coroutines.core)
+
+            // For UserSession and domain models dealing with time
+            implementation(libs.kotlinx.datetime)
+        }
+
+        androidMain.dependencies {
+            // Android-specific common dependencies can go here if needed later
+        }
+
+        val iosMain by creating {
+            dependencies {
+                // iOS-specific common dependencies
+            }
+        }
+
+        val jvmMain by getting {
+            dependencies {
+                // Desktop-specific common dependencies
+            }
         }
     }
 }
@@ -52,15 +60,5 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
-    }
-}
-
-buildkonfig {
-    packageName = "com.samduka.dukacred.core.common.config"
-    exposeObjectWithName = "AppConfig"
-
-    defaultConfigs {
-        buildConfigField(STRING, "SUPABASE_URL", secretsProperties.getProperty("SUPABASE_URL", ""))
-        buildConfigField(STRING, "SUPABASE_ANON_KEY", secretsProperties.getProperty("SUPABASE_ANON_KEY", ""))
     }
 }

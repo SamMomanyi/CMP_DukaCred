@@ -1,7 +1,7 @@
 package com.samduka.dukacred.core.domain.model
 
-import kotlin.time.Clock
 
+import kotlinx.datetime.Clock
 data class UserSession(
     val userId: UserId,
     val merchantId: MerchantId? = null,
@@ -13,5 +13,5 @@ data class UserSession(
 ) {
     val isMerchant: Boolean get() = role == UserRole.MERCHANT
     val isAdmin: Boolean get() = role == UserRole.ADMIN
-    val isExpired: Boolean get() = Clock.System.currentTimeMillis() > tokenExpiresAtEpochMs
+    val isExpired: Boolean get() = Clock.System.now().toEpochMilliseconds() > tokenExpiresAtEpochMs
 }

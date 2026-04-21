@@ -69,12 +69,14 @@ kotlin {
             implementation(libs.koin.core)
 
             // DukaCred Modules
-            implementation(project(":core:common"))
+               
 
             // Supabase
             implementation(libs.supabase.auth)
             implementation(libs.supabase.postgrest)
             implementation(libs.supabase.storage)
+            //kotinx - date time
+            implementation(libs.kotlinx.datetime)
         }
 
         androidMain.dependencies {
