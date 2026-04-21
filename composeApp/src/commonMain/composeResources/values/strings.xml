@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- App -->
+    <string name="app_name">DukaCred</string>
+    <string name="app_tagline">Inventory financing, simplified.</string>
+
+    <!-- Role Picker -->
+    <string name="role_picker_headline">Who are you?</string>
+    <string name="role_picker_subheading">Choose how you want to continue</string>
+    <string name="role_merchant_title">Shop Owner</string>
+    <string name="role_merchant_subtitle">Finance your stock, grow your duka</string>
+    <string name="role_merchant_cta">Continue as Merchant</string>
+    <string name="role_admin_title">Operations Staff</string>
+    <string name="role_admin_subtitle">Review requests and manage the portfolio</string>
+    <string name="role_admin_cta">Continue as Admin</string>
+
+    <!-- Merchant Sign In -->
+    <string name="merchant_signin_headline">Welcome back</string>
+    <string name="merchant_signin_subheading">Sign in to your merchant account</string>
+    <string name="merchant_signin_phone_label">Phone number</string>
+    <string name="merchant_signin_phone_placeholder">e.g. 0712 345 678</string>
+    <string name="merchant_signin_pin_label">PIN</string>
+    <string name="merchant_signin_pin_placeholder">Enter your 4-digit PIN</string>
+    <string name="merchant_signin_cta">Sign In</string>
+    <string name="merchant_signin_loading">Signing in…</string>
+    <string name="merchant_signin_back">Back</string>
+    <string name="merchant_signin_no_account">New to DukaCred?</string>
+    <string name="merchant_signin_contact_support">Contact your agent</string>
+
+    <!-- Admin Sign In -->
+    <string name="admin_signin_headline">Staff portal</string>
+    <string name="admin_signin_subheading">Sign in with your operations credentials</string>
+    <string name="admin_signin_email_label">Email address</string>
+    <string name="admin_signin_email_placeholder">you@dukacred.co.ke</string>
+    <string name="admin_signin_password_label">Password</string>
+    <string name="admin_signin_password_placeholder">Enter your password</string>
+    <string name="admin_signin_show_password">Show password</string>
+    <string name="admin_signin_hide_password">Hide password</string>
+    <string name="admin_signin_cta">Sign In</string>
+    <string name="admin_signin_loading">Signing in…</string>
+    <string name="admin_signin_back">Back</string>
+    <string name="admin_signin_forgot_password">Forgot password?</string>
+
+    <!-- Common -->
+    <string name="common_error_generic">Something went wrong. Please try again.</string>
+    <string name="common_loading">Loading…</string>
+    <string name="common_retry">Retry</string>
+    <string name="common_or">or</string>
+
+</resources>
