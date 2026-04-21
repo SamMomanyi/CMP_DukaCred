@@ -34,6 +34,9 @@ kotlin {
             implementation(libs.androidx.activity.compose)
         }
         commonMain.dependencies {
+            // ---> MODULE DEPENDENCIES BELONG HERE <---
+            implementation(project(":core:common"))
+            implementation(project(":core:network"))
             implementation(projects.core.common)
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)

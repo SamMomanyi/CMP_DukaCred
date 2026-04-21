@@ -1,9 +1,9 @@
 package com.samduka.dukacred.app.di
 
-import com.samduka.dukacred.app.shell.AppShellViewModel
-import org.koin.core.module.Module
+import com.samduka.dukacred.core.network.di.networkModule
 import org.koin.dsl.module
 
-fun appModule(): Module = module {
-    factory { AppShellViewModel() }
-}
+val appModules = listOf(
+    networkModule,
+    // more modules added here as we build features
+)
