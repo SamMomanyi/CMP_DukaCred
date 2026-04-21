@@ -4,6 +4,9 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinSerialization)
+   //compose plugins
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
 }
 
 kotlin {
@@ -29,8 +32,21 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.supabase.auth)
+
+            // Compose Core libraries!
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material3)
+            implementation(compose.ui)
+            implementation(compose.components.resources)
+
+            // Koin (Make sure you have koin.compose too so koinViewModel() works!)
             implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+
+            // Project Modules
             implementation(project(":core:common"))
+            implementation(project(":core:designsystem"))
             implementation(project(":core:network"))
         }
     }
