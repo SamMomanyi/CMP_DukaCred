@@ -69,14 +69,16 @@ kotlin {
             implementation(libs.koin.core)
 
             // DukaCred Modules
-               
+
 
             // Supabase
             implementation(libs.supabase.auth)
             implementation(libs.supabase.postgrest)
             implementation(libs.supabase.storage)
+            implementation(libs.supabase.functions)
             //kotinx - date time
             implementation(libs.kotlinx.datetime)
+            implementation(project(":core:common"))
         }
 
         androidMain.dependencies {
@@ -107,4 +109,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+}
+dependencies {
+    implementation(project(":core:common"))
 }
