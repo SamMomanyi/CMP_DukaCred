@@ -110,6 +110,4 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
-dependencies {
-    implementation(project(":core:common"))
-}
+
