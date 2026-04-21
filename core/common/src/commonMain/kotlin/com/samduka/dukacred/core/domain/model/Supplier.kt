@@ -1,12 +1,11 @@
 package com.samduka.dukacred.core.domain.model
 
-data class Merchant(
-    val id: MerchantId,
+enum class SupplierTrustTier { KNOWN, NEW, FLAGGED }
+
+data class Supplier(
+    val id: SupplierId,
     val name: String,
-    val phoneNumber: String,
-    val businessName: String,
-    val location: String,
-    val averageDailySalesKes: Double,
-    val hasOverdueContracts: Boolean = false,
-    val activeContractCount: Int = 0,
+    val tillNumber: String?,
+    val paybillNumber: String?,
+    val trustTier: SupplierTrustTier = SupplierTrustTier.KNOWN,
 )

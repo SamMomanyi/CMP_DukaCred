@@ -6,6 +6,32 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.buildKonfig)
+}
+
+// 1. Load the properties file safely from the root project
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.inputStream())
+}
+
+// 2. Configure BuildKonfig to generate the keys for this specific module
+buildkonfig {
+    packageName = "com.samduka.dukacred.core.network"
+
+    defaultConfigs {
+        buildConfigField(
+            STRING,
+            "SUPABASE_URL",
+            localProperties.getProperty("SUPABASE_URL") ?: "MISSING_URL"
+        )
+        buildConfigField(
+            STRING,
+            "SUPABASE_ANON_KEY",
+            localProperties.getProperty("SUPABASE_ANON_KEY") ?: "MISSING_KEY"
+        )
+    }
 }
 
 kotlin {
@@ -46,7 +72,7 @@ kotlin {
             implementation(project(":core:common"))
 
             // Supabase
-            implementation(libs.supabase.gotrue)
+            implementation(libs.supabase.auth)
             implementation(libs.supabase.postgrest)
             implementation(libs.supabase.storage)
         }
