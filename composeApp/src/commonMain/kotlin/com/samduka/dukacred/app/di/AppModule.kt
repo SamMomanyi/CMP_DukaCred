@@ -2,10 +2,14 @@ package com.samduka.dukacred.app.di
 
 import com.samduka.dukacred.core.network.di.networkModule
 import com.samduka.dukacred.feature.auth.di.authModule
-import org.koin.dsl.module
+import org.koin.core.module.Module
 
-val appModules = listOf(
+/**
+ * Master list of all Koin modules for the app.
+
+ */
+val appModules: List<Module> = listOf(
     networkModule,
-    authModule
-    // more modules added here as we build features
+    authModule,
+
 )
