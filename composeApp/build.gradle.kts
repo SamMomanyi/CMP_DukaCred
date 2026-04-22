@@ -88,6 +88,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:designsystem"))
     debugImplementation(libs.compose.uiTooling)
 }
 

@@ -40,10 +40,14 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
 
+            //THE ICONS <---
+                    implementation(compose.materialIconsExtended)
             // Koin (Make sure you have koin.compose too so koinViewModel() works!)
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
 
+            //koinViewModel() <---
+            implementation(libs.koin.compose.viewmodel)
             // Project Modules
             implementation(project(":core:common"))
             implementation(project(":core:designsystem"))
