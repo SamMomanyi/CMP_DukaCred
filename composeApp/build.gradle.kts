@@ -38,6 +38,7 @@ kotlin {
             implementation(project(":core:common"))
             implementation(project(":core:network"))
             implementation(project(":feature:auth"))
+            implementation(project(":core:designsystem"))
             implementation(projects.core.common)
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
