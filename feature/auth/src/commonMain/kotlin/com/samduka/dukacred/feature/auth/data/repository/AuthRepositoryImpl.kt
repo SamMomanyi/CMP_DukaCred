@@ -51,21 +51,24 @@ class AuthRepositoryImpl(
     }
 
     // Add after the existing signOut() impl:
+// Change the return type from AppResult<AuthUser, AppError> to AppResult<AuthUser, AuthError>
+// and fix both error callsites:
+
     override suspend fun signUp(
         email: String,
         password: String,
         role: UserRole,
-    ): AppResult<AuthUser, AppError> = try {
+    ): AppResult<AuthUser, AuthError> = try {  // AppError -> AuthError
         supabase.auth.signUpWith(Email) {
             this.email = email
             this.password = password
             data = buildJsonObject { put("role", role.name) }
         }
         val session = supabase.auth.currentSessionOrNull()
-            ?: return AppResult.Failure(AppError.AuthError("Signup succeeded but no session"))
+            ?: return AppResult.Failure(AuthError("Signup succeeded but no session"))  // AppError.AuthError -> AuthError
         AppResult.Success(session.toAuthUser())
     } catch (e: Exception) {
-        AppResult.Failure(AppError.AuthError(e.message ?: "Sign up failed"))
+        AppResult.Failure(AuthError(e.message ?: "Sign up failed"))  // AppError.AuthError -> AuthError
     }
 
     override suspend fun getActiveSession(): AppResult<AuthUser?, AuthError> = try {

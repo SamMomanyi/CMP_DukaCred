@@ -18,7 +18,7 @@ interface AuthRepository {
     ): AppResult<AuthUser, AuthError>
 
     // Add after signOut():
-    suspend fun signUp(email: String, password: String, role: UserRole): AppResult<AuthUser, AppError>
+    suspend fun signUp(email: String, password: String, role: UserRole): AppResult<AuthUser, AuthError>
     suspend fun getActiveSession(): AppResult<AuthUser?, AuthError>
 
     suspend fun signOut(): AppResult<Unit, AuthError>

@@ -1,6 +1,7 @@
 package com.samduka.dukacred.feature.auth.domain.usecase
 
 import com.samduka.dukacred.core.common.error.AppError
+import com.samduka.dukacred.core.common.error.ValidationError
 import com.samduka.dukacred.core.common.result.AppResult
 import com.samduka.dukacred.core.domain.model.UserRole
 import com.samduka.dukacred.feature.auth.domain.model.AuthUser
@@ -11,11 +12,11 @@ class SignUpUseCase(private val repository: AuthRepository) {
         email: String,
         password: String,
         role: UserRole,
-    ): AppResult<AuthUser, AppError> {
+    ): AppResult<AuthUser, AppError> {  // keep AppError here since ValidationError is also AppError
         if (email.isBlank() || !email.contains('@'))
-            return AppResult.Failure(AppError.ValidationError("Invalid email"))
+            return AppResult.Failure(ValidationError("Invalid email"))  // AppError.ValidationError -> ValidationError
         if (password.length < 6)
-            return AppResult.Failure(AppError.ValidationError("Password must be at least 6 characters"))
+            return AppResult.Failure(ValidationError("Password must be at least 6 characters"))  // same
         return repository.signUp(email, password, role)
     }
 }
