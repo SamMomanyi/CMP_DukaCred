@@ -1,6 +1,7 @@
 package com.samduka.dukacred.feature.auth.presentation.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -54,6 +55,7 @@ import com.samduka.dukacred.core.designsystem.generated.resources.admin_signin_s
 import com.samduka.dukacred.core.designsystem.generated.resources.admin_signin_subheading
 import com.samduka.dukacred.core.designsystem.generated.resources.role_admin_title
 import com.samduka.dukacred.feature.auth.presentation.action.AdminSignInAction
+import com.samduka.dukacred.feature.auth.presentation.action.MerchantSignInAction
 import com.samduka.dukacred.feature.auth.presentation.effect.AdminSignInEffect
 import com.samduka.dukacred.feature.auth.presentation.viewmodel.AdminSignInViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -242,6 +244,32 @@ fun AdminSignInScreen(
 
                 Spacer(Modifier.height(40.dp))
             }
+            // ... existing button code
+
+            Spacer(Modifier.weight(1f))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text  = "New to DukaCred?",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = DukaCredColors.Cream300,
+                )
+                TextButton(onClick = { viewModel.onAction(AdminSignInAction.SignUpClicked) }) {
+                    Text(
+                        text  = "Create Account",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = DukaCredColors.ForestGreen400,
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(24.dp))
+// ... closing braces
+
         }
     }
 }

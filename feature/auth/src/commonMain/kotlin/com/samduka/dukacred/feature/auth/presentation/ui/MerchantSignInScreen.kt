@@ -1,8 +1,10 @@
 package com.samduka.dukacred.feature.auth.presentation.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -221,7 +224,31 @@ fun MerchantSignInScreen(
 
                 Spacer(Modifier.height(40.dp))
             }
+            // ... existing button code
 
+            Spacer(Modifier.weight(1f))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text  = "New to DukaCred?",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = DukaCredColors.Cream300,
+                )
+                TextButton(onClick = { viewModel.onAction(MerchantSignInAction.SignUpClicked) }) {
+                    Text(
+                        text  = "Create Account",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = DukaCredColors.Ochre400,
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(24.dp))
+// ... closing braces
         }
     }
 }
