@@ -39,6 +39,9 @@ class AdminSignInViewModel(
 
             AdminSignInAction.BackClicked ->
                 sendEffect(AdminSignInEffect.NavigateBack)
+
+            AdminSignInAction.SignUpClicked ->
+                sendEffect(AdminSignInEffect.NavigateToSignUp)
         }
     }
 

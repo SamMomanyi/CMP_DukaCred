@@ -36,7 +36,11 @@ class MerchantSignInViewModel(
 
             MerchantSignInAction.BackClicked ->
                 sendEffect(MerchantSignInEffect.NavigateBack)
+
+            MerchantSignInAction.SignUpClicked ->
+                sendEffect(MerchantSignInEffect.NavigateToSignUp)
         }
+
     }
 
     private fun signIn() {

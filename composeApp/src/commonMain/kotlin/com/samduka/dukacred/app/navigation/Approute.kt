@@ -24,4 +24,5 @@ sealed class AppRoute(val route: String) {
 
 
     data object AdminQueue : AppRoute("admin/queue")
+    data object SignUp : AppRoute("auth/sign_up")
 }

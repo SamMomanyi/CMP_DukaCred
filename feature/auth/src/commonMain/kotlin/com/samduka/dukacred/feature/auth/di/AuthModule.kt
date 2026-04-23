@@ -5,9 +5,11 @@ import com.samduka.dukacred.feature.auth.domain.repository.AuthRepository
 import com.samduka.dukacred.feature.auth.domain.usecase.RestoreSessionUseCase
 import com.samduka.dukacred.feature.auth.domain.usecase.SignInAdminUseCase
 import com.samduka.dukacred.feature.auth.domain.usecase.SignInMerchantUseCase
+import com.samduka.dukacred.feature.auth.domain.usecase.SignUpUseCase
 import com.samduka.dukacred.feature.auth.presentation.viewmodel.AdminSignInViewModel
 import com.samduka.dukacred.feature.auth.presentation.viewmodel.MerchantSignInViewModel
 import com.samduka.dukacred.feature.auth.presentation.viewmodel.RolePickerViewModel
+import com.samduka.dukacred.feature.auth.presentation.viewmodel.SignUpViewModel
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
@@ -26,4 +28,6 @@ val authModule = module {
     factoryOf(::RolePickerViewModel)
     factoryOf(::MerchantSignInViewModel)
     factoryOf(::AdminSignInViewModel)
+    factoryOf(::SignUpUseCase)
+    factoryOf(::SignUpViewModel)
 }

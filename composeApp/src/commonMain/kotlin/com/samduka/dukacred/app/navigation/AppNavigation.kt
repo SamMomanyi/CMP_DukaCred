@@ -14,6 +14,7 @@ import com.samduka.dukacred.core.designsystem.DukaCredColors
 import com.samduka.dukacred.feature.auth.presentation.ui.AdminSignInScreen
 import com.samduka.dukacred.feature.auth.presentation.ui.MerchantSignInScreen
 import com.samduka.dukacred.feature.auth.presentation.ui.RolePickerScreen
+import com.samduka.dukacred.feature.auth.presentation.ui.SignUpScreen
 
 /**
  * Root navigation host.
@@ -72,6 +73,9 @@ fun AppNavigation() {
                 onNavigateBack = {
                     navController.popBackStack()
                 },
+                onNavigateToSignUp = {
+                    navController.navigate(AppRoute.SignUp.route)
+                },
             )
         }
 
@@ -86,6 +90,9 @@ fun AppNavigation() {
                 onNavigateBack = {
                     navController.popBackStack()
                 },
+                onNavigateToSignUp = {
+                    navController.navigate(AppRoute.SignUp.route)
+                },
             )
         }
 
@@ -97,6 +104,24 @@ fun AppNavigation() {
         // ── Admin Queue (stub) ────────────────────────────────────────────────
         composable(route = AppRoute.AdminQueue.route) {
             StubScreen(label = "Admin Queue — coming soon")
+        }
+
+        // Add inside NavHost, after the AdminSignIn composable:
+
+        composable(route = AppRoute.SignUp.route) {
+            SignUpScreen(
+                onNavigateToMerchantHome = {
+                    navController.navigate(AppRoute.MerchantHome.route) {
+                        popUpTo(AppRoute.RolePicker.route) { inclusive = true }
+                    }
+                },
+                onNavigateToAdminQueue = {
+                    navController.navigate(AppRoute.AdminQueue.route) {
+                        popUpTo(AppRoute.RolePicker.route) { inclusive = true }
+                    }
+                },
+                onNavigateBack = { navController.popBackStack() },
+            )
         }
     }
 }

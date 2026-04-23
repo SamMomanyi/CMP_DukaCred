@@ -58,6 +58,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun MerchantSignInScreen(
     onNavigateToMerchantHome: () -> Unit,
     onNavigateBack: () -> Unit,
+    onNavigateToSignUp: () -> Unit,
     viewModel: MerchantSignInViewModel = koinViewModel<MerchantSignInViewModel>(),
 ) {
     val state by viewModel.state.collectAsState()
@@ -67,6 +68,7 @@ fun MerchantSignInScreen(
             when (effect) {
                 MerchantSignInEffect.NavigateToMerchantHome -> onNavigateToMerchantHome()
                 MerchantSignInEffect.NavigateBack           -> onNavigateBack()
+                MerchantSignInEffect.NavigateToSignUp -> onNavigateToSignUp()
             }
         }
     }
@@ -219,6 +221,7 @@ fun MerchantSignInScreen(
 
                 Spacer(Modifier.height(40.dp))
             }
+
         }
     }
 }

@@ -12,6 +12,7 @@ sealed interface MerchantSignInAction : UiAction {
     data class PinChanged(val value: String)         : MerchantSignInAction
     data object SignInClicked                         : MerchantSignInAction
     data object BackClicked                           : MerchantSignInAction
+    data object SignUpClicked : MerchantSignInAction  // and same for AdminSignInAction
 }
 
 sealed interface AdminSignInAction : UiAction {
@@ -20,4 +21,9 @@ sealed interface AdminSignInAction : UiAction {
     data object TogglePasswordVisibility             : AdminSignInAction
     data object SignInClicked                        : AdminSignInAction
     data object BackClicked                          : AdminSignInAction
+
+    data object SignUpClicked : AdminSignInAction
+}
+
+
 }
