@@ -8,8 +8,8 @@ import com.samduka.dukacred.feature.auth.domain.model.AuthUser
 
 interface AuthRepository {
     suspend fun signInAsMerchant(
-        phoneNumber: String,
-        pin: String,
+        email: String,
+        password: String,
     ): AppResult<AuthUser, AuthError>
 
     suspend fun signInAsAdmin(

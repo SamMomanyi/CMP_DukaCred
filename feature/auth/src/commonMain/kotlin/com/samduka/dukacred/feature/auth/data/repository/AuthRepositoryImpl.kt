@@ -14,23 +14,26 @@ import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 
+// ... existing code
 class AuthRepositoryImpl(
     private val supabase: SupabaseClient,
 ) : AuthRepository {
 
     override suspend fun signInAsMerchant(
-        phoneNumber: String,
-        pin: String,
+        email: String,
+        password: String,
     ): AppResult<AuthUser, AuthError> = try {
-        supabase.auth.signInWith(Phone) {
-            phone = phoneNumber
-            password = pin
+        // Swap Phone to Email provider
+        supabase.auth.signInWith(Email) {
+            this.email = email
+            this.password = password
         }
         val session = supabase.auth.currentSessionOrNull()
             ?: return AppResult.Failure(AuthError("Sign in failed. Please try again."))
 
         AppResult.Success(session.toAuthUser(UserRole.MERCHANT))
     } catch (e: Exception) {
+
         AppResult.Failure(AuthError(e.toReadableMessage()))
     }
 

@@ -7,14 +7,16 @@ data class RolePickerState(
     val isCheckingSession: Boolean = true,
 ) : UiState
 
+// ... existing code
 data class MerchantSignInState(
-    val phoneNumber: String = "",
-    val pin: String = "",
+    val email: String = "",
+    val password: String = "",
+    val isPasswordVisible: Boolean = false,
     val isLoading: Boolean = false,
-    val phoneError: String? = null,
-    val pinError: String? = null,
-    val generalError: String? = null,
-) : UiState
+    val emailError: String? = null,
+    val passwordError: String? = null,
+    val generalError: String? = null
+)
 
 data class AdminSignInState(
     val email: String = "",

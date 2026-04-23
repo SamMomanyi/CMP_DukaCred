@@ -7,12 +7,14 @@ sealed interface RolePickerAction : UiAction {
     data object SelectAdmin    : RolePickerAction
 }
 
-sealed interface MerchantSignInAction : UiAction {
-    data class PhoneNumberChanged(val value: String) : MerchantSignInAction
-    data class PinChanged(val value: String)         : MerchantSignInAction
-    data object SignInClicked                         : MerchantSignInAction
-    data object BackClicked                           : MerchantSignInAction
-    data object SignUpClicked : MerchantSignInAction  // and same for AdminSignInAction
+// ... existing code
+sealed interface MerchantSignInAction {
+    data class EmailChanged(val value: String) : MerchantSignInAction
+    data class PasswordChanged(val value: String) : MerchantSignInAction
+    data object TogglePasswordVisibility : MerchantSignInAction
+    data object SignInClicked : MerchantSignInAction
+    data object SignUpClicked : MerchantSignInAction
+    data object BackClicked : MerchantSignInAction
 }
 
 sealed interface AdminSignInAction : UiAction {

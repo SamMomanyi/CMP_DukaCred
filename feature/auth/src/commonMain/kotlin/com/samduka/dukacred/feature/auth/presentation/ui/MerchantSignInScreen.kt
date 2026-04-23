@@ -17,6 +17,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Visibility
+import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +34,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.samduka.dukacred.core.designsystem.DukaCredColors
@@ -154,35 +157,35 @@ fun MerchantSignInScreen(
 
                 Spacer(Modifier.height(48.dp))
 
-                // Phone field
                 DukaCredTextField(
-                    value         = state.phoneNumber,
-                    onValueChange = {
-                        viewModel.onAction(MerchantSignInAction.PhoneNumberChanged(it))
-                    },
-                    label         = stringResource(Res.string.merchant_signin_phone_label),
-                    placeholder   = stringResource(Res.string.merchant_signin_phone_placeholder),
-                    errorMessage  = state.phoneError,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Phone,
-                    ),
+                    value         = state.email,
+                    onValueChange = { viewModel.onAction(MerchantSignInAction.EmailChanged(it)) },
+                    label         = "Email",
+                    placeholder   = "Enter your email",
+                    errorMessage  = state.emailError,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 )
 
                 Spacer(Modifier.height(20.dp))
 
-                // PIN field
+                // Password field
                 DukaCredTextField(
-                    value         = state.pin,
-                    onValueChange = {
-                        viewModel.onAction(MerchantSignInAction.PinChanged(it))
+                    value         = state.password,
+                    onValueChange = { viewModel.onAction(MerchantSignInAction.PasswordChanged(it)) },
+                    label                = "Password",
+                    placeholder          = "Enter your password",
+                    errorMessage         = state.passwordError,
+                    visualTransformation = if (state.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    keyboardOptions      = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    trailingIcon = {
+                        IconButton(onClick = { viewModel.onAction(MerchantSignInAction.TogglePasswordVisibility) }) {
+                            Icon(
+                                imageVector = if (state.isPasswordVisible) Icons.Rounded.VisibilityOff else Icons.Rounded.Visibility,
+                                contentDescription = null,
+                                tint = DukaCredColors.Cream300,
+                            )
+                        }
                     },
-                    label                = stringResource(Res.string.merchant_signin_pin_label),
-                    placeholder          = stringResource(Res.string.merchant_signin_pin_placeholder),
-                    errorMessage         = state.pinError,
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions      = KeyboardOptions(
-                        keyboardType = KeyboardType.NumberPassword,
-                    ),
                 )
 
                 // General error

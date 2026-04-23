@@ -26,38 +26,25 @@ class MerchantSignInViewModel(
 
     fun onAction(action: MerchantSignInAction) {
         when (action) {
-            is MerchantSignInAction.PhoneNumberChanged ->
-                _state.update { it.copy(phoneNumber = action.value, phoneError = null) }
-
-            is MerchantSignInAction.PinChanged ->
-                _state.update { it.copy(pin = action.value, pinError = null) }
-
+            is MerchantSignInAction.EmailChanged ->
+                _state.update { it.copy(email = action.value, emailError = null) }
+            is MerchantSignInAction.PasswordChanged ->
+                _state.update { it.copy(password = action.value, passwordError = null) }
+            MerchantSignInAction.TogglePasswordVisibility ->
+                _state.update { it.copy(isPasswordVisible = !state.value.isPasswordVisible) }
             MerchantSignInAction.SignInClicked -> signIn()
-
-            MerchantSignInAction.BackClicked ->
-                sendEffect(MerchantSignInEffect.NavigateBack)
-
-            MerchantSignInAction.SignUpClicked ->
-                sendEffect(MerchantSignInEffect.NavigateToSignUp)
+            MerchantSignInAction.SignUpClicked -> sendEffect(MerchantSignInEffect.NavigateToSignUp)
+            MerchantSignInAction.BackClicked -> sendEffect(MerchantSignInEffect.NavigateBack)
         }
-
     }
 
     private fun signIn() {
         val current = state.value
-        // Clear previous errors
-        _state.update { it.copy(
-            isLoading    = true,
-            generalError = null,
-            phoneError   = null,
-            pinError     = null,
-        )}
+        _state.update { it.copy(isLoading = true, generalError = null, emailError = null, passwordError = null) }
 
         viewModelScope.launch {
-            val result = signInMerchant(
-                phoneNumber = current.phoneNumber.trim(),
-                pin         = current.pin.trim(),
-            )
+
+            val result = signInMerchant(email = current.email.trim(), password = current.password)
             when (result) {
                 is AppResult.Success -> {
                     _state.update { it.copy(isLoading = false) }

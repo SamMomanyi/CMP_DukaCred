@@ -32,9 +32,16 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
+
+
+// ... existing code
 include(":composeApp")
+//The core bucket
 include(":core:common")
 include(":core:network")
 include(":core:domain")
-include(":feature:auth")
 include(":core:designsystem")
+
+// The feature bucket
+include(":feature:auth")
+include(":feature:merchant-home")

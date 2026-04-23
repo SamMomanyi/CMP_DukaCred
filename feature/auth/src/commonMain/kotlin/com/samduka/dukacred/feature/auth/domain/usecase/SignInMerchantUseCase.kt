@@ -9,20 +9,20 @@ class SignInMerchantUseCase(
     private val repository: AuthRepository,
 ) {
     suspend operator fun invoke(
-        phoneNumber: String,
-        pin: String,
+        email: String,
+        password: String,
     ): AppResult<AuthUser, AuthError> {
         // Validate before hitting the network
-        if (phoneNumber.isBlank()) {
+        if (email.isBlank()) {
             return AppResult.Failure(
-                AuthError("Phone number cannot be empty")
+                AuthError("Email cannot be empty")
             )
         }
-        if (pin.length < 4) {
+        if (password.length < 6) {
             return AppResult.Failure(
-                AuthError("PIN must be at least 4 digits")
+                AuthError("Password must be at least 6 characters")
             )
         }
-        return repository.signInAsMerchant(phoneNumber, pin)
+        return repository.signInAsMerchant(email, password)
     }
 }
