@@ -1,27 +1,39 @@
 package com.samduka.dukacred.feature.auth.presentation.viewmodel
 
-import com.samduka.dukacred.core.common.mvi.BaseViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.samduka.dukacred.core.common.result.AppResult
 import com.samduka.dukacred.feature.auth.domain.usecase.SignInAdminUseCase
 import com.samduka.dukacred.feature.auth.presentation.action.AdminSignInAction
 import com.samduka.dukacred.feature.auth.presentation.effect.AdminSignInEffect
 import com.samduka.dukacred.feature.auth.presentation.state.AdminSignInState
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class AdminSignInViewModel(
     private val signInAdmin: SignInAdminUseCase,
-) : BaseViewModel<AdminSignInState, AdminSignInAction, AdminSignInEffect>(
-    initialState = AdminSignInState(),
-) {
-    override fun onAction(action: AdminSignInAction) {
+) : ViewModel() {
+
+    private val _state = MutableStateFlow(AdminSignInState())
+    val state = _state.asStateFlow()
+
+    private val _effects = MutableSharedFlow<AdminSignInEffect>()
+    val effects = _effects.asSharedFlow()
+
+    fun onAction(action: AdminSignInAction) {
         when (action) {
             is AdminSignInAction.EmailChanged ->
-                updateState { it.copy(email = action.value, emailError = null) }
+                _state.update { it.copy(email = action.value, emailError = null) }
 
             is AdminSignInAction.PasswordChanged ->
-                updateState { it.copy(password = action.value, passwordError = null) }
+                _state.update { it.copy(password = action.value, passwordError = null) }
 
             AdminSignInAction.TogglePasswordVisibility ->
-                updateState { it.copy(isPasswordVisible = !state.value.isPasswordVisible) }
+                _state.update { it.copy(isPasswordVisible = !state.value.isPasswordVisible) }
 
             AdminSignInAction.SignInClicked -> signIn()
 
@@ -32,30 +44,36 @@ class AdminSignInViewModel(
 
     private fun signIn() {
         val current = state.value
-        updateState { it.copy(
+        _state.update { it.copy(
             isLoading     = true,
             generalError  = null,
             emailError    = null,
             passwordError = null,
         )}
 
-        launch {
+        viewModelScope.launch {
             val result = signInAdmin(
                 email    = current.email.trim(),
                 password = current.password,
             )
             when (result) {
                 is AppResult.Success -> {
-                    updateState { it.copy(isLoading = false) }
+                    _state.update { it.copy(isLoading = false) }
                     sendEffect(AdminSignInEffect.NavigateToAdminQueue)
                 }
                 is AppResult.Failure -> {
-                    updateState { it.copy(
+                    _state.update { it.copy(
                         isLoading    = false,
                         generalError = result.error.message,
                     )}
                 }
             }
+        }
+    }
+
+    private fun sendEffect(effect: AdminSignInEffect) {
+        viewModelScope.launch {
+            _effects.emit(effect)
         }
     }
 }

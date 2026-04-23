@@ -64,7 +64,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun AdminSignInScreen(
     onNavigateToAdminQueue: () -> Unit,
     onNavigateBack: () -> Unit,
-    viewModel: AdminSignInViewModel = koinViewModel(),
+    viewModel: AdminSignInViewModel = koinViewModel<AdminSignInViewModel>(),
 ) {
     val state by viewModel.state.collectAsState()
 

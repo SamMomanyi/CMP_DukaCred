@@ -50,6 +50,7 @@ import com.samduka.dukacred.core.designsystem.generated.resources.role_picker_he
 import com.samduka.dukacred.core.designsystem.generated.resources.role_picker_subheading
 import com.samduka.dukacred.feature.auth.presentation.action.RolePickerAction
 import com.samduka.dukacred.feature.auth.presentation.effect.RolePickerEffect
+import com.samduka.dukacred.feature.auth.presentation.viewmodel.AdminSignInViewModel
 import com.samduka.dukacred.feature.auth.presentation.viewmodel.RolePickerViewModel
 import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.resources.stringResource
@@ -61,7 +62,7 @@ fun RolePickerScreen(
     onNavigateToAdminSignIn: () -> Unit,
     onNavigateToMerchantHome: () -> Unit,
     onNavigateToAdminQueue: () -> Unit,
-    viewModel: RolePickerViewModel = koinViewModel(),
+    viewModel: RolePickerViewModel = koinViewModel<RolePickerViewModel>(),
 ) {
     val state by viewModel.state.collectAsState()
 

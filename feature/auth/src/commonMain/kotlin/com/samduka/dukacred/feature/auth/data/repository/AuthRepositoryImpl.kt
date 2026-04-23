@@ -1,5 +1,6 @@
 package com.samduka.dukacred.feature.auth.data.repository
 
+import com.samduka.dukacred.core.common.error.AppError
 import com.samduka.dukacred.core.common.error.AuthError
 import com.samduka.dukacred.core.common.result.AppResult
 import com.samduka.dukacred.core.domain.model.UserRole
@@ -9,7 +10,9 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.auth.providers.builtin.Phone
+import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.put
 
 class AuthRepositoryImpl(
     private val supabase: SupabaseClient,
@@ -45,6 +48,24 @@ class AuthRepositoryImpl(
         AppResult.Success(session.toAuthUser(UserRole.ADMIN))
     } catch (e: Exception) {
         AppResult.Failure(AuthError(e.toReadableMessage()))
+    }
+
+    // Add after the existing signOut() impl:
+    override suspend fun signUp(
+        email: String,
+        password: String,
+        role: UserRole,
+    ): AppResult<AuthUser, AppError> = try {
+        supabase.auth.signUpWith(Email) {
+            this.email = email
+            this.password = password
+            data = buildJsonObject { put("role", role.name) }
+        }
+        val session = supabase.auth.currentSessionOrNull()
+            ?: return AppResult.Failure(AppError.AuthError("Signup succeeded but no session"))
+        AppResult.Success(session.toAuthUser())
+    } catch (e: Exception) {
+        AppResult.Failure(AppError.AuthError(e.message ?: "Sign up failed"))
     }
 
     override suspend fun getActiveSession(): AppResult<AuthUser?, AuthError> = try {
@@ -95,7 +116,7 @@ private fun io.github.jan.supabase.auth.user.UserSession.toAuthUser(
         role         = role,
         accessToken  = this.accessToken,
         refreshToken = this.refreshToken,
-        expiresAt    = this.expiresAt?.toEpochMilliseconds() ?: 0L,
+        expiresAt    = this.expiresAt.toEpochMilliseconds(),
     )
 }
 

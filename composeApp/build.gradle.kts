@@ -50,6 +50,10 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.koin.compose)
             implementation(libs.koin.core)
+            implementation(libs.androidx.navigation.compose)
+            implementation(libs.ktor.client.core)
+
+            implementation(libs.compose.runtime)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -57,6 +61,7 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+            implementation(libs.ktor.client.okhttp)
         }
     }
 }

@@ -1,24 +1,36 @@
 package com.samduka.dukacred.feature.auth.presentation.viewmodel
 
-import com.samduka.dukacred.core.common.mvi.BaseViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.samduka.dukacred.core.common.result.AppResult
 import com.samduka.dukacred.feature.auth.domain.usecase.SignInMerchantUseCase
 import com.samduka.dukacred.feature.auth.presentation.action.MerchantSignInAction
 import com.samduka.dukacred.feature.auth.presentation.effect.MerchantSignInEffect
 import com.samduka.dukacred.feature.auth.presentation.state.MerchantSignInState
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class MerchantSignInViewModel(
     private val signInMerchant: SignInMerchantUseCase,
-) : BaseViewModel<MerchantSignInState, MerchantSignInAction, MerchantSignInEffect>(
-    initialState = MerchantSignInState(),
-) {
-    override fun onAction(action: MerchantSignInAction) {
+) : ViewModel() {
+
+    private val _state = MutableStateFlow(MerchantSignInState())
+    val state = _state.asStateFlow()
+
+    private val _effects = MutableSharedFlow<MerchantSignInEffect>()
+    val effects = _effects.asSharedFlow()
+
+    fun onAction(action: MerchantSignInAction) {
         when (action) {
             is MerchantSignInAction.PhoneNumberChanged ->
-                updateState { it.copy(phoneNumber = action.value, phoneError = null) }
+                _state.update { it.copy(phoneNumber = action.value, phoneError = null) }
 
             is MerchantSignInAction.PinChanged ->
-                updateState { it.copy(pin = action.value, pinError = null) }
+                _state.update { it.copy(pin = action.value, pinError = null) }
 
             MerchantSignInAction.SignInClicked -> signIn()
 
@@ -30,30 +42,36 @@ class MerchantSignInViewModel(
     private fun signIn() {
         val current = state.value
         // Clear previous errors
-        updateState { it.copy(
+        _state.update { it.copy(
             isLoading    = true,
             generalError = null,
             phoneError   = null,
             pinError     = null,
         )}
 
-        launch {
+        viewModelScope.launch {
             val result = signInMerchant(
                 phoneNumber = current.phoneNumber.trim(),
                 pin         = current.pin.trim(),
             )
             when (result) {
                 is AppResult.Success -> {
-                    updateState { it.copy(isLoading = false) }
+                    _state.update { it.copy(isLoading = false) }
                     sendEffect(MerchantSignInEffect.NavigateToMerchantHome)
                 }
                 is AppResult.Failure -> {
-                    updateState { it.copy(
+                    _state.update { it.copy(
                         isLoading    = false,
                         generalError = result.error.message,
                     )}
                 }
             }
+        }
+    }
+
+    private fun sendEffect(effect: MerchantSignInEffect) {
+        viewModelScope.launch {
+            _effects.emit(effect)
         }
     }
 }

@@ -58,7 +58,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun MerchantSignInScreen(
     onNavigateToMerchantHome: () -> Unit,
     onNavigateBack: () -> Unit,
-    viewModel: MerchantSignInViewModel = koinViewModel(),
+    viewModel: MerchantSignInViewModel = koinViewModel<MerchantSignInViewModel>(),
 ) {
     val state by viewModel.state.collectAsState()
 
