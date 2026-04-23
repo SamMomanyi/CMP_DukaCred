@@ -31,7 +31,7 @@ fun SignUpScreen(
     onNavigateToMerchantHome: () -> Unit,
     onNavigateToAdminQueue: () -> Unit,
     onNavigateBack: () -> Unit,
-    viewModel: SignUpViewModel = koinViewModel(),
+    viewModel: SignUpViewModel = koinViewModel<SignUpViewModel>(),
 ) {
     val state by viewModel.state.collectAsState()
 
