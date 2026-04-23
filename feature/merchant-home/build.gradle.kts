@@ -47,7 +47,7 @@ kotlin {
             // Project Modules
             implementation(project(":core:common"))
             implementation(project(":core:designsystem"))
-            implementation(project(":core:domain")) // Needed for Money, Enums, etc.
+           // implementation(project(":core:domain")) // Needed for Money, Enums, etc.
         }
     }
 }

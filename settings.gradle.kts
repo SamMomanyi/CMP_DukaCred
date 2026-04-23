@@ -39,7 +39,7 @@ include(":composeApp")
 //The core bucket
 include(":core:common")
 include(":core:network")
-include(":core:domain")
+//include(":core:domain")
 include(":core:designsystem")
 
 // The feature bucket
