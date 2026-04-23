@@ -48,4 +48,46 @@
     <string name="common_retry">Retry</string>
     <string name="common_or">or</string>
 
+    <!-- Merchant Home -->
+
+    <!-- Header -->
+    <string name="home_greeting_morning">Good morning</string>
+    <string name="home_greeting_afternoon">Good afternoon</string>
+    <string name="home_greeting_evening">Good evening</string>
+    <string name="home_subtitle">Here’s your business snapshot</string>
+    <string name="home_notifications">Notifications</string>
+
+    <!-- Credit Card -->
+    <string name="home_credit_title">Available Credit</string>
+    <string name="home_credit_used">Used</string>
+    <string name="home_credit_limit">Limit</string>
+    <string name="home_credit_status_healthy">Healthy usage</string>
+    <string name="home_credit_status_warning">High usage</string>
+    <string name="home_credit_status_critical">Limit almost reached</string>
+
+    <string name="home_next_payment">Next payment</string>
+    <string name="home_no_due_date">No due date</string>
+
+    <!-- Suggested Action -->
+    <string name="home_suggested_action">Suggested action</string>
+    <string name="home_pay_now">Pay now</string>
+
+    <!-- Quick Actions -->
+    <string name="home_action_capture">Capture Invoice</string>
+    <string name="home_action_pay">Pay</string>
+    <string name="home_action_history">History</string>
+    <string name="home_action_more">More</string>
+
+    <!-- Obligations -->
+    <string name="home_obligations_title">Active Obligations</string>
+    <string name="home_obligations_empty_title">No active obligations</string>
+    <string name="home_obligations_empty_subtitle">You're all caught up 🎉</string>
+
+    <string name="home_obligation_principal">Principal</string>
+    <string name="home_obligation_outstanding">Outstanding</string>
+
+    <!-- Status Labels -->
+    <string name="status_positive">On Track</string>
+    <string name="status_warning">Due Soon</string>
+    <string name="status_urgent">Overdue</string>
 </resources>

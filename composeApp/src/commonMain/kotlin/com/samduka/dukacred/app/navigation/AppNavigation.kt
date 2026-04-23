@@ -1,5 +1,6 @@
 package com.samduka.dukacred.app.navigation
 
+import AppRoute
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
 import com.samduka.dukacred.core.designsystem.DukaCredColors
 import com.samduka.dukacred.feature.auth.presentation.ui.AdminSignInScreen
 import com.samduka.dukacred.feature.auth.presentation.ui.MerchantSignInScreen
@@ -23,106 +25,101 @@ fun AppNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = AppRoute.RolePicker
+        startDestination = AppRoute.AuthGraph
     ) {
 
-        // ── Role Picker ───────────────────────────────────────────────
-        composable<AppRoute.RolePicker> {
-            RolePickerScreen(
-                onNavigateToMerchantSignIn = {
-                    navController.navigate(AppRoute.MerchantSignIn)
-                },
-                onNavigateToAdminSignIn = {
-                    navController.navigate(AppRoute.AdminSignIn)
-                },
-                onNavigateToMerchantHome = {
-                    navController.navigate(AppRoute.MerchantHome) {
-                        popUpTo(AppRoute.RolePicker) { inclusive = true }
+        // ── AUTH GRAPH ───────────────────────────────────────────────
+        navigation<AppRoute.AuthGraph>(startDestination = AppRoute.RolePicker) {
+
+            composable<AppRoute.RolePicker> {
+                RolePickerScreen(
+                    onNavigateToMerchantSignIn = {
+                        navController.navigate(AppRoute.MerchantSignIn)
+                    },
+                    onNavigateToAdminSignIn = {
+                        navController.navigate(AppRoute.AdminSignIn)
+                    },
+                    onNavigateToMerchantHome = {
+                        navController.navigate(AppRoute.MainGraph) {
+                            popUpTo(AppRoute.AuthGraph) { inclusive = true }
+                        }
+                    },
+                    onNavigateToAdminQueue = {
+                        navController.navigate(AppRoute.MainGraph) {
+                            popUpTo(AppRoute.AuthGraph) { inclusive = true }
+                        }
                     }
-                },
-                onNavigateToAdminQueue = {
-                    navController.navigate(AppRoute.AdminQueue) {
-                        popUpTo(AppRoute.RolePicker) { inclusive = true }
+                )
+            }
+
+            composable<AppRoute.MerchantSignIn> {
+                MerchantSignInScreen(
+                    onNavigateToMerchantHome = {
+                        navController.navigate(AppRoute.MainGraph) {
+                            popUpTo(AppRoute.AuthGraph) { inclusive = true }
+                        }
+                    },
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToSignUp = {
+                        navController.navigate(AppRoute.SignUp)
                     }
-                }
-            )
+                )
+            }
+
+            composable<AppRoute.AdminSignIn> {
+                AdminSignInScreen(
+                    onNavigateToAdminQueue = {
+                        navController.navigate(AppRoute.MainGraph) {
+                            popUpTo(AppRoute.AuthGraph) { inclusive = true }
+                        }
+                    },
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToSignUp = {
+                        navController.navigate(AppRoute.SignUp)
+                    }
+                )
+            }
+
+            composable<AppRoute.SignUp> {
+                SignUpScreen(
+                    onNavigateToMerchantHome = {
+                        navController.navigate(AppRoute.MainGraph) {
+                            popUpTo(AppRoute.AuthGraph) { inclusive = true }
+                        }
+                    },
+                    onNavigateToAdminQueue = {
+                        navController.navigate(AppRoute.MainGraph) {
+                            popUpTo(AppRoute.AuthGraph) { inclusive = true }
+                        }
+                    },
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
         }
 
-        // ── Merchant Sign-In ──────────────────────────────────────────
-        composable<AppRoute.MerchantSignIn> {
-            MerchantSignInScreen(
-                onNavigateToMerchantHome = {
-                    navController.navigate(AppRoute.MerchantHome) {
-                        popUpTo(AppRoute.RolePicker) { inclusive = true }
-                    }
-                },
-                onNavigateBack = {
-                    navController.popBackStack()
-                },
-                onNavigateToSignUp = {
-                    navController.navigate(AppRoute.SignUp)
-                }
-            )
-        }
+        // ── MAIN GRAPH ───────────────────────────────────────────────
+        navigation<AppRoute.MainGraph>(startDestination = AppRoute.MerchantHome) {
 
-        // ── Admin Sign-In ─────────────────────────────────────────────
-        composable<AppRoute.AdminSignIn> {
-            AdminSignInScreen(
-                onNavigateToAdminQueue = {
-                    navController.navigate(AppRoute.AdminQueue) {
-                        popUpTo(AppRoute.RolePicker) { inclusive = true }
+            composable<AppRoute.MerchantHome> {
+                MerchantHomeScreen(
+                    onCaptureInvoice = {
+                        println("TODO: Invoice Capture")
+                    },
+                    onPay = {
+                        println("TODO: Payment")
+                    },
+                    onHistory = {
+                        println("TODO: History")
+                    },
+                    onNotifications = {
+                        println("TODO: Notifications")
                     }
-                },
-                onNavigateBack = {
-                    navController.popBackStack()
-                },
-                onNavigateToSignUp = {
-                    navController.navigate(AppRoute.SignUp)
-                }
-            )
-        }
+                )
+            }
 
-        // ── Sign Up ───────────────────────────────────────────────────
-        composable<AppRoute.SignUp> {
-            SignUpScreen(
-                onNavigateToMerchantHome = {
-                    navController.navigate(AppRoute.MerchantHome) {
-                        popUpTo(AppRoute.RolePicker) { inclusive = true }
-                    }
-                },
-                onNavigateToAdminQueue = {
-                    navController.navigate(AppRoute.AdminQueue) {
-                        popUpTo(AppRoute.RolePicker) { inclusive = true }
-                    }
-                },
-                onNavigateBack = {
-                    navController.popBackStack()
-                }
-            )
-        }
-
-        // ── Merchant Home ─────────────────────────────────────────────
-        composable<AppRoute.MerchantHome> {
-            MerchantHomeScreen(
-                onCaptureInvoice = {
-                    println("TODO: Navigate to Invoice Capture")
-                    // navController.navigate(AppRoute.InvoiceCapture)
-                },
-                onPay = {
-                    println("TODO: Navigate to Payment")
-                },
-                onHistory = {
-                    println("TODO: Navigate to History")
-                },
-                onNotifications = {
-                    println("TODO: Navigate to Notifications")
-                }
-            )
-        }
-
-        // ── Admin Queue (stub for now) ────────────────────────────────
-        composable<AppRoute.AdminQueue> {
-            StubScreen(label = "Admin Queue — coming soon")
+            composable<AppRoute.AdminQueue> {
+                StubScreen("Admin Queue — coming soon")
+            }
         }
     }
 }

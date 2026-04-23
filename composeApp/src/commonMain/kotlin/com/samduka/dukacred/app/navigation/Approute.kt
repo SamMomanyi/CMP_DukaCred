@@ -3,6 +3,12 @@ import kotlinx.serialization.Serializable
 sealed class AppRoute {
 
     @Serializable
+    data object AuthGraph
+
+    @Serializable
+    data object MainGraph
+
+    @Serializable
     data object RolePicker : AppRoute()
 
     @Serializable
