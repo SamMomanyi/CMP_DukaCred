@@ -39,6 +39,8 @@ kotlin {
             implementation(project(":core:network"))
             implementation(project(":feature:auth"))
             implementation(project(":core:designsystem"))
+            implementation(project(":feature:merchant-home"))
+
             implementation(projects.core.common)
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)

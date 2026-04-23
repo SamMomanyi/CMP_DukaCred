@@ -15,129 +15,129 @@ import com.samduka.dukacred.feature.auth.presentation.ui.AdminSignInScreen
 import com.samduka.dukacred.feature.auth.presentation.ui.MerchantSignInScreen
 import com.samduka.dukacred.feature.auth.presentation.ui.RolePickerScreen
 import com.samduka.dukacred.feature.auth.presentation.ui.SignUpScreen
+import com.samduka.dukacred.feature.merchanthome.presentation.ui.MerchantHomeScreen
 
-/**
- * Root navigation host.
- *
- * Rules:
- * - Start destination is always [AppRoute.RolePicker]. The [RolePickerViewModel]
- *   handles session-restore internally; if a valid session exists it fires an
- *   effect that navigates forward before the picker UI is ever visible.
- * - Sign-in screens pop themselves off the back stack on success so that the
- *   system Back button cannot return to a sign-in screen from the home screen.
- * - MerchantHome and AdminQueue clear the entire auth back stack on entry, so
- *   Back from those screens exits the app rather than returning to auth.
- */
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
 
     NavHost(
-        navController    = navController,
-        startDestination = AppRoute.RolePicker.route,
+        navController = navController,
+        startDestination = AppRoute.RolePicker
     ) {
 
-        // ── Role Picker ───────────────────────────────────────────────────────
-        composable(route = AppRoute.RolePicker.route) {
+        // ── Role Picker ───────────────────────────────────────────────
+        composable<AppRoute.RolePicker> {
             RolePickerScreen(
                 onNavigateToMerchantSignIn = {
-                    navController.navigate(AppRoute.MerchantSignIn.route)
+                    navController.navigate(AppRoute.MerchantSignIn)
                 },
                 onNavigateToAdminSignIn = {
-                    navController.navigate(AppRoute.AdminSignIn.route)
+                    navController.navigate(AppRoute.AdminSignIn)
                 },
                 onNavigateToMerchantHome = {
-                    navController.navigate(AppRoute.MerchantHome.route) {
-                        // Clear the entire auth back stack — user is now authenticated
-                        popUpTo(AppRoute.RolePicker.route) { inclusive = true }
+                    navController.navigate(AppRoute.MerchantHome) {
+                        popUpTo(AppRoute.RolePicker) { inclusive = true }
                     }
                 },
                 onNavigateToAdminQueue = {
-                    navController.navigate(AppRoute.AdminQueue.route) {
-                        popUpTo(AppRoute.RolePicker.route) { inclusive = true }
+                    navController.navigate(AppRoute.AdminQueue) {
+                        popUpTo(AppRoute.RolePicker) { inclusive = true }
                     }
-                },
+                }
             )
         }
 
-        // ── Merchant Sign-In ──────────────────────────────────────────────────
-        composable(route = AppRoute.MerchantSignIn.route) {
+        // ── Merchant Sign-In ──────────────────────────────────────────
+        composable<AppRoute.MerchantSignIn> {
             MerchantSignInScreen(
                 onNavigateToMerchantHome = {
-                    navController.navigate(AppRoute.MerchantHome.route) {
-                        // Pop everything up to (and including) RolePicker so the
-                        // auth graph is fully removed from the back stack
-                        popUpTo(AppRoute.RolePicker.route) { inclusive = true }
+                    navController.navigate(AppRoute.MerchantHome) {
+                        popUpTo(AppRoute.RolePicker) { inclusive = true }
                     }
                 },
                 onNavigateBack = {
                     navController.popBackStack()
                 },
                 onNavigateToSignUp = {
-                    navController.navigate(AppRoute.SignUp.route)
-                },
+                    navController.navigate(AppRoute.SignUp)
+                }
             )
         }
 
-        // ── Admin Sign-In ─────────────────────────────────────────────────────
-        composable(route = AppRoute.AdminSignIn.route) {
+        // ── Admin Sign-In ─────────────────────────────────────────────
+        composable<AppRoute.AdminSignIn> {
             AdminSignInScreen(
                 onNavigateToAdminQueue = {
-                    navController.navigate(AppRoute.AdminQueue.route) {
-                        popUpTo(AppRoute.RolePicker.route) { inclusive = true }
+                    navController.navigate(AppRoute.AdminQueue) {
+                        popUpTo(AppRoute.RolePicker) { inclusive = true }
                     }
                 },
                 onNavigateBack = {
                     navController.popBackStack()
                 },
                 onNavigateToSignUp = {
-                    navController.navigate(AppRoute.SignUp.route)
-                },
+                    navController.navigate(AppRoute.SignUp)
+                }
             )
         }
 
-        // ── Merchant Home (stub) ──────────────────────────────────────────────
-        composable(route = AppRoute.MerchantHome.route) {
-            StubScreen(label = "Merchant Home — coming soon")
-        }
-
-        // ── Admin Queue (stub) ────────────────────────────────────────────────
-        composable(route = AppRoute.AdminQueue.route) {
-            StubScreen(label = "Admin Queue — coming soon")
-        }
-
-        // Add inside NavHost, after the AdminSignIn composable:
-
-        composable(route = AppRoute.SignUp.route) {
+        // ── Sign Up ───────────────────────────────────────────────────
+        composable<AppRoute.SignUp> {
             SignUpScreen(
                 onNavigateToMerchantHome = {
-                    navController.navigate(AppRoute.MerchantHome.route) {
-                        popUpTo(AppRoute.RolePicker.route) { inclusive = true }
+                    navController.navigate(AppRoute.MerchantHome) {
+                        popUpTo(AppRoute.RolePicker) { inclusive = true }
                     }
                 },
                 onNavigateToAdminQueue = {
-                    navController.navigate(AppRoute.AdminQueue.route) {
-                        popUpTo(AppRoute.RolePicker.route) { inclusive = true }
+                    navController.navigate(AppRoute.AdminQueue) {
+                        popUpTo(AppRoute.RolePicker) { inclusive = true }
                     }
                 },
-                onNavigateBack = { navController.popBackStack() },
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
             )
+        }
+
+        // ── Merchant Home ─────────────────────────────────────────────
+        composable<AppRoute.MerchantHome> {
+            MerchantHomeScreen(
+                onCaptureInvoice = {
+                    println("TODO: Navigate to Invoice Capture")
+                    // navController.navigate(AppRoute.InvoiceCapture)
+                },
+                onPay = {
+                    println("TODO: Navigate to Payment")
+                },
+                onHistory = {
+                    println("TODO: Navigate to History")
+                },
+                onNotifications = {
+                    println("TODO: Navigate to Notifications")
+                }
+            )
+        }
+
+        // ── Admin Queue (stub for now) ────────────────────────────────
+        composable<AppRoute.AdminQueue> {
+            StubScreen(label = "Admin Queue — coming soon")
         }
     }
 }
 
-
 @Composable
 private fun StubScreen(label: String) {
     Box(
-        modifier          = Modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(DukaCredColors.ForestGreen900),
-        contentAlignment  = Alignment.Center,
+        contentAlignment = Alignment.Center
     ) {
         Text(
-            text  = label,
-            color = DukaCredColors.Cream100,
+            text = label,
+            color = DukaCredColors.Cream100
         )
     }
 }
