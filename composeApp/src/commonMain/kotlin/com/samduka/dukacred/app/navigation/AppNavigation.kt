@@ -101,20 +101,10 @@ fun AppNavigation() {
         navigation<AppRoute.MainGraph>(startDestination = AppRoute.MerchantHome) {
 
             composable<AppRoute.MerchantHome> {
-                MerchantHomeScreen(
-                    onCaptureInvoice = {
-                        println("TODO: Invoice Capture")
-                    },
-                    onPay = {
-                        println("TODO: Payment")
-                    },
-                    onHistory = {
-                        println("TODO: History")
-                    },
-                    onNotifications = {
-                        println("TODO: Notifications")
-                    }
-                )
+                composable<AppRoute.MerchantHome> {
+                    // This Shell now handles showing the MerchantHomeScreen automatically!
+                    DashboardShellScreen()
+                }
             }
 
             composable<AppRoute.AdminQueue> {

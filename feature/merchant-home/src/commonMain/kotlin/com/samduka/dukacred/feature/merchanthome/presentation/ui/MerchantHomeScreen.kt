@@ -10,9 +10,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.outlined.CameraAlt
-import androidx.compose.material.icons.outlined.History
-import androidx.compose.material.icons.outlined.Payments
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,23 +18,31 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.samduka.dukacred.core.designsystem.generated.resources.Res
+import com.samduka.dukacred.core.designsystem.generated.resources.*
 import com.samduka.dukacred.core.designsystem.DukaCredColors
 import com.samduka.dukacred.core.designsystem.DukaCredFonts
 import com.samduka.dukacred.core.designsystem.component.DukaCredPrimaryButton
 import com.samduka.dukacred.feature.merchanthome.presentation.state.MerchantHomeState
 import com.samduka.dukacred.feature.merchanthome.presentation.state.ObligationUiModel
+import org.jetbrains.compose.resources.stringResource
 
 private fun formatMoney(amountCents: Long, currency: String = "KES"): String {
     val amount = amountCents / 100.0
-    // Using a simple fallback formatter since java.text isn't fully supported in pure KMP commonMain without expect/actual
-    val amountString = amount.toString()
-    val padded = if (amountString.substringAfter(".").length == 1) "${amountString}0" else amountString
-    return "$currency $padded"
+    val parts = amount.toString().split(".")
+    val integerPart = parts[0]
+
+    val fractionalPart = if (parts.size > 1) {
+        parts[1].padEnd(2, '0').take(2)
+    } else {
+        "00"
+    }
+
+    return "$currency $integerPart.$fractionalPart"
 }
 
 @Composable
@@ -56,45 +61,45 @@ fun MerchantHomeScreen(
                 .fillMaxSize()
                 .padding(innerPadding),
             contentPadding = PaddingValues(bottom = 32.dp),
-            verticalArrangement = Arrangement.spacedBy(0.dp),
         ) {
+
             item {
                 DashboardHeader(
                     merchantName = state.merchantName,
-                    onNotificationsClick = onNotifications,
+                    onNotificationsClick = onNotifications
                 )
             }
 
             item {
                 CreditHeroCard(
                     state = state,
-                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
+                    modifier = Modifier.padding(horizontal = 20.dp)
                 )
             }
 
             item {
-                QuickActionBar(
+                QuickActions(
                     onCaptureInvoice = onCaptureInvoice,
                     onPay = onPay,
                     onHistory = onHistory,
-                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
+                    modifier = Modifier.padding(20.dp)
                 )
             }
 
             item {
-                ObligationsSectionHeader(
+                ObligationsHeader(
                     count = state.obligations.size,
-                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp),
+                    modifier = Modifier.padding(horizontal = 20.dp)
                 )
             }
 
             if (state.obligations.isEmpty()) {
-                item { EmptyObligations() }
+                item { EmptyState() }
             } else {
-                items(state.obligations, key = { it.id }) { obligation ->
+                items(state.obligations) {
                     ObligationCard(
-                        obligation = obligation,
-                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp),
+                        obligation = it,
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)
                     )
                 }
             }
@@ -105,58 +110,50 @@ fun MerchantHomeScreen(
 @Composable
 private fun DashboardHeader(
     merchantName: String,
-    onNotificationsClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    onNotificationsClick: () -> Unit
 ) {
-    Row(
-        modifier = modifier
+    Column(
+        modifier = Modifier
             .fillMaxWidth()
             .statusBarsPadding()
-            .padding(horizontal = 20.dp, vertical = 20.dp),
-        verticalAlignment = Alignment.CenterVertically,
+            .padding(20.dp)
     ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = "Morning,",
-                fontFamily = DukaCredFonts.dmSansFamily(),
-                fontWeight = FontWeight.Normal,
-                fontSize = 14.sp,
-                color = DukaCredColors.Cream300,
-            )
-            Text(
-                text = merchantName,
-                fontFamily = DukaCredFonts.soraFamily(),
-                fontWeight = FontWeight.Bold,
-                fontSize = 22.sp,
-                color = DukaCredColors.Cream100,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
 
-        Box {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(Res.string.home_greeting_morning),
+                    fontSize = 14.sp,
+                    color = DukaCredColors.Cream300
+                )
+                Text(
+                    text = merchantName,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = DukaCredColors.Cream100,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = stringResource(Res.string.home_subtitle),
+                    fontSize = 12.sp,
+                    color = DukaCredColors.Cream300
+                )
+            }
+
             IconButton(
                 onClick = onNotificationsClick,
                 modifier = Modifier
                     .size(44.dp)
                     .clip(CircleShape)
-                    .background(DukaCredColors.ForestGreen800),
+                    .background(DukaCredColors.ForestGreen800)
             ) {
                 Icon(
-                    imageVector = Icons.Filled.Notifications,
-                    contentDescription = "Notifications",
-                    tint = DukaCredColors.Ochre400,
-                    modifier = Modifier.size(22.dp),
+                    Icons.Filled.Notifications,
+                    contentDescription = stringResource(Res.string.home_notifications),
+                    tint = DukaCredColors.Ochre400
                 )
             }
-            Box(
-                modifier = Modifier
-                    .size(9.dp)
-                    .clip(CircleShape)
-                    .background(DukaCredColors.Error)
-                    .align(Alignment.TopEnd)
-                    .offset(x = (-6).dp, y = 6.dp),
-            )
         }
     }
 }
@@ -164,117 +161,78 @@ private fun DashboardHeader(
 @Composable
 private fun CreditHeroCard(
     state: MerchantHomeState,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
-    val animatedProgress by animateFloatAsState(
+    val progress by animateFloatAsState(
         targetValue = state.creditUsageFraction,
-        animationSpec = tween(durationMillis = 900),
-        label = "creditProgress",
+        animationSpec = tween(800),
+        label = ""
     )
+
+    val status = when {
+        progress < 0.5f -> stringResource(Res.string.home_credit_status_healthy)
+        progress < 0.8f -> stringResource(Res.string.home_credit_status_warning)
+        else -> stringResource(Res.string.home_credit_status_critical)
+    }
+
+    val next = state.obligations.firstOrNull { it.isUrgent }
 
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(24.dp)
     ) {
-        Box(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
                 .background(
                     Brush.linearGradient(
-                        colors = listOf(
+                        listOf(
                             DukaCredColors.ForestGreen600,
                             DukaCredColors.ForestGreen700
                         )
                     )
                 )
-                .padding(24.dp),
+                .padding(24.dp)
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
-                Text(
-                    text = "Available Credit",
-                    fontFamily = DukaCredFonts.dmSansFamily(),
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 13.sp,
-                    color = DukaCredColors.Cream300,
-                )
 
-                Text(
-                    text = formatMoney(state.availableCredit.amountCents, state.availableCredit.currency),
-                    fontFamily = DukaCredFonts.soraFamily(),
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 34.sp,
-                    color = DukaCredColors.Cream100,
-                )
+            Text(stringResource(Res.string.home_credit_title), color = DukaCredColors.Cream300)
 
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        Text(
-                            text = "Used: ${formatMoney(state.totalCreditLimit.amountCents - state.availableCredit.amountCents, state.availableCredit.currency)}",
-                            fontFamily = DukaCredFonts.dmSansFamily(),
-                            fontSize = 12.sp,
-                            color = DukaCredColors.Cream300,
-                        )
-                        Text(
-                            text = "Limit: ${formatMoney(state.totalCreditLimit.amountCents, state.totalCreditLimit.currency)}",
-                            fontFamily = DukaCredFonts.dmSansFamily(),
-                            fontSize = 12.sp,
-                            color = DukaCredColors.Cream300,
-                        )
-                    }
+            Text(
+                formatMoney(state.availableCredit.amountCents),
+                fontSize = 34.sp,
+                fontWeight = FontWeight.Bold,
+                color = DukaCredColors.Cream100
+            )
 
-                    LinearProgressIndicator(
-                        progress = { animatedProgress },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(7.dp)
-                            .clip(RoundedCornerShape(50)),
-                        color = if (animatedProgress > 0.8f) DukaCredColors.Error else DukaCredColors.Ochre400,
-                        trackColor = DukaCredColors.BlackAlpha40,
-                        strokeCap = StrokeCap.Round,
+            Text(status, color = DukaCredColors.Ochre400, fontSize = 12.sp)
+
+            Spacer(Modifier.height(8.dp))
+
+            LinearProgressIndicator(
+                progress = { progress },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(6.dp)
+                    .clip(RoundedCornerShape(50)),
+                strokeCap = StrokeCap.Round
+            )
+
+            if (next != null && next.nextPaymentAmount != null) {
+                Spacer(Modifier.height(16.dp))
+
+                Text(stringResource(Res.string.home_suggested_action), color = DukaCredColors.Cream300)
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        "Pay ${formatMoney(next.nextPaymentAmount.amountCents)}",
+                        fontWeight = FontWeight.Bold,
+                        color = DukaCredColors.Cream100
                     )
-                }
 
-                HorizontalDivider(color = DukaCredColors.Cream300.copy(alpha = 0.2f), thickness = 1.dp)
-
-                val nextObligation = state.obligations.firstOrNull { it.nextPaymentAmount != null && !it.isUrgent } ?: state.obligations.firstOrNull { it.nextPaymentAmount != null }
-
-                if (nextObligation != null) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Column {
-                            Text(
-                                text = "Next Payment",
-                                fontFamily = DukaCredFonts.dmSansFamily(),
-                                fontSize = 12.sp,
-                                color = DukaCredColors.Cream300,
-                            )
-                            Text(
-                                text = nextObligation.nextPaymentDueDate ?: "—",
-                                fontFamily = DukaCredFonts.dmSansFamily(),
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 14.sp,
-                                color = DukaCredColors.Cream100,
-                            )
-                        }
-                        Surface(
-                            shape = RoundedCornerShape(50),
-                            color = DukaCredColors.Charcoal800.copy(alpha = 0.4f),
-                        ) {
-                            Text(
-                                text = formatMoney(nextObligation.nextPaymentAmount!!.amountCents, nextObligation.nextPaymentAmount.currency),
-                                fontFamily = DukaCredFonts.soraFamily(),
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp,
-                                color = DukaCredColors.Cream200,
-                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
-                            )
-                        }
+                    TextButton(onClick = {}) {
+                        Text(stringResource(Res.string.home_pay_now))
                     }
                 }
             }
@@ -283,125 +241,98 @@ private fun CreditHeroCard(
 }
 
 @Composable
-private fun QuickActionBar(
+private fun QuickActions(
     onCaptureInvoice: () -> Unit,
     onPay: () -> Unit,
     onHistory: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
+    Column(modifier = modifier) {
+
         DukaCredPrimaryButton(
-            text = "Capture Invoice",
-            onClick = onCaptureInvoice,
-            containerColor = DukaCredColors.Ochre500,
-            contentColor = DukaCredColors.Cream100,
-            modifier = Modifier.weight(1f).height(52.dp)
+            text = stringResource(Res.string.home_action_capture),
+            onClick = onCaptureInvoice
         )
 
-        QuickSecondaryAction(icon = Icons.Outlined.Payments, label = "Pay", onClick = onPay)
-        QuickSecondaryAction(icon = Icons.Outlined.History, label = "History", onClick = onHistory)
-    }
-}
+        Spacer(Modifier.height(10.dp))
 
-@Composable
-private fun QuickSecondaryAction(icon: ImageVector, label: String, onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier
-            .height(52.dp)
-            .widthIn(min = 72.dp),
-        shape = RoundedCornerShape(14.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = DukaCredColors.ForestGreen800, contentColor = DukaCredColors.Cream200),
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Icon(imageVector = icon, contentDescription = label, modifier = Modifier.size(20.dp))
-            Text(text = label, fontFamily = DukaCredFonts.dmSansFamily(), fontWeight = FontWeight.SemiBold, fontSize = 10.sp)
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Button(
+                onClick = onPay,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(stringResource(Res.string.home_action_pay))
+            }
+
+            Button(
+                onClick = onHistory,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(stringResource(Res.string.home_action_history))
+            }
         }
     }
 }
 
 @Composable
-private fun ObligationsSectionHeader(count: Int, modifier: Modifier = Modifier) {
+private fun ObligationsHeader(count: Int, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "Active Obligations",
-            fontFamily = DukaCredFonts.soraFamily(),
+            stringResource(Res.string.home_obligations_title),
             fontWeight = FontWeight.Bold,
-            fontSize = 17.sp,
-            color = DukaCredColors.Cream100,
+            color = DukaCredColors.Cream100
         )
-        Surface(shape = CircleShape, color = DukaCredColors.ForestGreen800) {
-            Text(
-                text = "$count",
-                fontFamily = DukaCredFonts.soraFamily(),
-                fontWeight = FontWeight.Bold,
-                fontSize = 12.sp,
-                color = DukaCredColors.Ochre400,
-                modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp),
-            )
-        }
+
+        Text("$count", color = DukaCredColors.Ochre400)
     }
 }
 
 @Composable
 private fun ObligationCard(obligation: ObligationUiModel, modifier: Modifier = Modifier) {
-    val chipBackground = when {
-        obligation.isPositive -> DukaCredColors.Success.copy(alpha = 0.15f)
-        obligation.isUrgent   -> DukaCredColors.Error.copy(alpha = 0.15f)
-        else                  -> DukaCredColors.Warning.copy(alpha = 0.15f)
-    }
-    val chipContent = when {
-        obligation.isPositive -> DukaCredColors.Success
-        obligation.isUrgent   -> DukaCredColors.Error
-        else                  -> DukaCredColors.Warning
-    }
-
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = DukaCredColors.ForestGreen800),
+        shape = RoundedCornerShape(16.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = obligation.invoiceReference,
-                    fontFamily = DukaCredFonts.soraFamily(),
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 15.sp,
-                    color = DukaCredColors.Cream100,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f, fill = false),
-                )
-                Spacer(Modifier.width(8.dp))
-                StatusChip(label = obligation.statusLabel, backgroundColor = chipBackground, contentColor = chipContent)
-            }
+        Column(Modifier.padding(16.dp)) {
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(24.dp),
-            ) {
-                AmountColumn(label = "Principal", value = formatMoney(obligation.principalAmount.amountCents))
-                if (obligation.outstandingAmount != null) {
-                    AmountColumn(label = "Outstanding", value = formatMoney(obligation.outstandingAmount.amountCents), valueColor = if (obligation.isUrgent) DukaCredColors.Error else DukaCredColors.Cream200)
-                }
+            Text(obligation.invoiceReference, fontWeight = FontWeight.Bold)
+
+            Spacer(Modifier.height(6.dp))
+
+            Text(
+                "${stringResource(Res.string.home_obligation_principal)}: ${
+                    formatMoney(obligation.principalAmount.amountCents)
+                }"
+            )
+
+            obligation.outstandingAmount?.let {
+                Text(
+                    "${stringResource(Res.string.home_obligation_outstanding)}: ${
+                        formatMoney(it.amountCents)
+                    }"
+                )
             }
         }
+    }
+}
+
+@Composable
+private fun EmptyState() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(40.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("📋", fontSize = 40.sp)
+        Text(
+            stringResource(Res.string.home_obligations_empty_title),
+            fontWeight = FontWeight.Bold
+        )
+        Text(stringResource(Res.string.home_obligations_empty_subtitle))
     }
 }
 
