@@ -33,16 +33,10 @@ import org.jetbrains.compose.resources.stringResource
 
 private fun formatMoney(amountCents: Long, currency: String = "KES"): String {
     val amount = amountCents / 100.0
-    val parts = amount.toString().split(".")
-    val integerPart = parts[0]
-
-    val fractionalPart = if (parts.size > 1) {
-        parts[1].padEnd(2, '0').take(2)
-    } else {
-        "00"
-    }
-
-    return "$currency $integerPart.$fractionalPart"
+    val intPart = amount.toLong().toString()
+        .reversed().chunked(3).joinToString(",").reversed()
+    val fracPart = ((amountCents % 100).coerceAtLeast(0)).toString().padStart(2, '0')
+    return "$currency $intPart.$fracPart"
 }
 
 @Composable
@@ -294,13 +288,13 @@ private fun ObligationsHeader(count: Int, modifier: Modifier = Modifier) {
 @Composable
 private fun ObligationCard(obligation: ObligationUiModel, modifier: Modifier = Modifier) {
     val statusBackground = when {
-        obligation.isUrgent   -> DukaCredColors.ErrorRed.copy(alpha = 0.15f)
-        obligation.isPositive -> DukaCredColors.SuccessGreen.copy(alpha = 0.12f)
+        obligation.isUrgent   -> DukaCredColors.Error.copy(alpha = 0.15f)
+        obligation.isPositive -> DukaCredColors.Success.copy(alpha = 0.12f)
         else                  -> DukaCredColors.ForestGreen700.copy(alpha = 0.4f)
     }
     val statusContent = when {
-        obligation.isUrgent   -> DukaCredColors.ErrorRed
-        obligation.isPositive -> DukaCredColors.SuccessGreen
+        obligation.isUrgent   -> DukaCredColors.Error
+        obligation.isPositive -> DukaCredColors.Success
         else                  -> DukaCredColors.Ochre400
     }
 
@@ -341,14 +335,14 @@ private fun ObligationCard(obligation: ObligationUiModel, modifier: Modifier = M
                     AmountColumn(
                         label = stringResource(Res.string.home_obligation_outstanding),
                         value = formatMoney(it.amountCents),
-                        valueColor = if (obligation.isUrgent) DukaCredColors.ErrorRed else DukaCredColors.Cream200
+                        valueColor = if (obligation.isUrgent) DukaCredColors.Error else DukaCredColors.Cream200
                     )
                 }
                 obligation.nextPaymentDueDate?.let {
                     AmountColumn(
                         label = stringResource(Res.string.home_obligation_due_date),
                         value = it,
-                        valueColor = if (obligation.isUrgent) DukaCredColors.ErrorRed else DukaCredColors.Cream300
+                        valueColor = if (obligation.isUrgent) DukaCredColors.Error else DukaCredColors.Cream300
                     )
                 }
             }
