@@ -290,30 +290,67 @@ private fun ObligationsHeader(count: Int, modifier: Modifier = Modifier) {
     }
 }
 
+
 @Composable
 private fun ObligationCard(obligation: ObligationUiModel, modifier: Modifier = Modifier) {
+    val statusBackground = when {
+        obligation.isUrgent   -> DukaCredColors.ErrorRed.copy(alpha = 0.15f)
+        obligation.isPositive -> DukaCredColors.SuccessGreen.copy(alpha = 0.12f)
+        else                  -> DukaCredColors.ForestGreen700.copy(alpha = 0.4f)
+    }
+    val statusContent = when {
+        obligation.isUrgent   -> DukaCredColors.ErrorRed
+        obligation.isPositive -> DukaCredColors.SuccessGreen
+        else                  -> DukaCredColors.Ochre400
+    }
+
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp)
     ) {
-        Column(Modifier.padding(16.dp)) {
-
-            Text(obligation.invoiceReference, fontWeight = FontWeight.Bold)
-
-            Spacer(Modifier.height(6.dp))
-
-            Text(
-                "${stringResource(Res.string.home_obligation_principal)}: ${
-                    formatMoney(obligation.principalAmount.amountCents)
-                }"
-            )
-
-            obligation.outstandingAmount?.let {
+        Column(
+            Modifier
+                .background(DukaCredColors.ForestGreen800)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
-                    "${stringResource(Res.string.home_obligation_outstanding)}: ${
-                        formatMoney(it.amountCents)
-                    }"
+                    obligation.invoiceReference,
+                    fontFamily = DukaCredFonts.soraFamily(),
+                    fontWeight = FontWeight.Bold,
+                    color = DukaCredColors.Cream100
                 )
+                StatusChip(
+                    label = obligation.statusLabel,
+                    backgroundColor = statusBackground as Color,
+                    contentColor = statusContent
+                )
+            }
+
+            Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                AmountColumn(
+                    label = stringResource(Res.string.home_obligation_principal),
+                    value = formatMoney(obligation.principalAmount.amountCents)
+                )
+                obligation.outstandingAmount?.let {
+                    AmountColumn(
+                        label = stringResource(Res.string.home_obligation_outstanding),
+                        value = formatMoney(it.amountCents),
+                        valueColor = if (obligation.isUrgent) DukaCredColors.ErrorRed else DukaCredColors.Cream200
+                    )
+                }
+                obligation.nextPaymentDueDate?.let {
+                    AmountColumn(
+                        label = stringResource(Res.string.home_obligation_due_date),
+                        value = it,
+                        valueColor = if (obligation.isUrgent) DukaCredColors.ErrorRed else DukaCredColors.Cream300
+                    )
+                }
             }
         }
     }
