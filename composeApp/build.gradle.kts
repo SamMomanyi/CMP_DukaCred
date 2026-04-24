@@ -60,6 +60,9 @@ kotlin {
             implementation(libs.compose.runtime)
 
             implementation(libs.kotlinx.serialization.json)
+            implementation(compose.materialIconsExtended)
+
+            implementation(libs.compose.ui)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

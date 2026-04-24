@@ -101,10 +101,8 @@ fun AppNavigation() {
         navigation<AppRoute.MainGraph>(startDestination = AppRoute.MerchantHome) {
 
             composable<AppRoute.MerchantHome> {
-                composable<AppRoute.MerchantHome> {
                     // This Shell now handles showing the MerchantHomeScreen automatically!
                     DashboardShellScreen()
-                }
             }
 
             composable<AppRoute.AdminQueue> {
