@@ -17,7 +17,7 @@ import com.samduka.dukacred.feature.auth.presentation.ui.AdminSignInScreen
 import com.samduka.dukacred.feature.auth.presentation.ui.MerchantSignInScreen
 import com.samduka.dukacred.feature.auth.presentation.ui.RolePickerScreen
 import com.samduka.dukacred.feature.auth.presentation.ui.SignUpScreen
-import com.samduka.dukacred.feature.merchanthome.presentation.ui.MerchantHomeScreen
+import com.samduka.dukacred.feature.invoicecapture.presentation.ui.InvoiceCaptureScreen
 
 @Composable
 fun AppNavigation() {
@@ -101,12 +101,21 @@ fun AppNavigation() {
         navigation<AppRoute.MainGraph>(startDestination = AppRoute.MerchantHome) {
 
             composable<AppRoute.MerchantHome> {
-                    // This Shell now handles showing the MerchantHomeScreen automatically!
-                    DashboardShellScreen()
+                DashboardShellScreen(
+                    onNavigateToInvoiceCapture = {
+                        navController.navigate(AppRoute.InvoiceCapture)
+                    }
+                )
             }
 
             composable<AppRoute.AdminQueue> {
                 StubScreen("Admin Queue — coming soon")
+            }
+
+            composable<AppRoute.InvoiceCapture> {
+                InvoiceCaptureScreen(
+                    onClose = { navController.popBackStack() }
+                )
             }
         }
     }

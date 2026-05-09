@@ -14,7 +14,9 @@ import com.samduka.dukacred.core.designsystem.DukaCredColors
 import com.samduka.dukacred.feature.merchanthome.presentation.ui.MerchantHomeScreen
 
 @Composable
-fun DashboardShellScreen() {
+fun DashboardShellScreen(
+    onNavigateToInvoiceCapture: () -> Unit = {}
+) {
     var selectedTab by remember { mutableStateOf<DashboardTab>(DashboardTab.Home) }
 
     Scaffold(
@@ -28,7 +30,13 @@ fun DashboardShellScreen() {
                     val isSelected = tab == selectedTab
                     NavigationBarItem(
                         selected = isSelected,
-                        onClick = { selectedTab = tab },
+                        onClick = {
+                            if (tab == DashboardTab.Capture) {
+                                onNavigateToInvoiceCapture()
+                            } else {
+                                selectedTab = tab
+                            }
+                        },
                         icon = {
                             Icon(
                                 imageVector = tab.icon,
@@ -54,7 +62,9 @@ fun DashboardShellScreen() {
                 .background(DukaCredColors.ForestGreen900)
         ) {
             when (selectedTab) {
-                DashboardTab.Home -> MerchantHomeScreen()
+                DashboardTab.Home -> MerchantHomeScreen(
+                    onCaptureInvoice = onNavigateToInvoiceCapture
+                )
                 DashboardTab.Capture -> StubScreen("Capture Invoice — coming soon")
                 DashboardTab.History -> StubScreen("History — coming soon")
                 DashboardTab.Profile -> StubScreen("Profile — coming soon")

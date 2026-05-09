@@ -25,4 +25,7 @@ sealed class AppRoute {
 
     @Serializable
     data object AdminQueue : AppRoute()
+
+    @Serializable
+    data object InvoiceCapture : AppRoute()
 }
