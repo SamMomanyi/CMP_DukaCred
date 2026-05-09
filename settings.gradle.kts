@@ -45,3 +45,4 @@ include(":core:designsystem")
 // The feature bucket
 include(":feature:auth")
 include(":feature:merchant-home")
+include(":feature:invoice-capture")

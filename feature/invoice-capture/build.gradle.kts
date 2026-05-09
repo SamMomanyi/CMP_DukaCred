@@ -43,14 +43,19 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
 
-            // Peekaboo Camera & Image Picker
-            implementation(libs.peekaboo.ui)
-            implementation(libs.peekaboo.image.picker)
-
             // Project Modules
             implementation(project(":core:common"))
             implementation(project(":core:designsystem"))
-            implementation(project(":core:domain"))
+        }
+
+        androidMain.dependencies {
+            implementation(libs.peekaboo.ui)
+            implementation(libs.peekaboo.image.picker)
+        }
+
+        iosMain.dependencies {
+            implementation(libs.peekaboo.ui)
+            implementation(libs.peekaboo.image.picker)
         }
     }
 }
