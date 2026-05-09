@@ -1,0 +1,46 @@
+package com.samduka.dukacred.feature.invoicecapture.presentation.ui
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import io.github.onseok.peekaboo.ui.CameraMode
+import io.github.onseok.peekaboo.ui.PeekabooCamera
+import io.github.onseok.peekaboo.ui.PeekabooCameraState
+import io.github.onseok.peekaboo.ui.rememberPeekabooCameraState
+
+actual class InvoiceCaptureCameraController(
+    private val state: PeekabooCameraState
+) {
+    actual val isCameraReady: Boolean
+        get() = state.isCameraReady
+
+    actual val isCapturing: Boolean
+        get() = state.isCapturing
+
+    actual fun capture() {
+        state.capture()
+    }
+}
+
+@Composable
+actual fun rememberInvoiceCaptureCameraController(
+    onCapture: (ByteArray?) -> Unit
+): InvoiceCaptureCameraController {
+    val state = rememberPeekabooCameraState(
+        initialCameraMode = CameraMode.Back,
+        onCapture = onCapture
+    )
+    return InvoiceCaptureCameraController(state)
+}
+
+@Composable
+actual fun InvoiceCapturePreview(
+    controller: InvoiceCaptureCameraController,
+    modifier: Modifier,
+    permissionDeniedContent: @Composable () -> Unit
+) {
+    PeekabooCamera(
+        state = controller.state,
+        modifier = modifier,
+        permissionDeniedContent = permissionDeniedContent
+    )
+}
