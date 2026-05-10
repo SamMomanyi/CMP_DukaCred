@@ -67,7 +67,7 @@ fun DashboardShellScreen(
                 )
                 DashboardTab.Capture -> StubScreen("Capture Invoice — coming soon")
                 DashboardTab.History -> StubScreen("History — coming soon")
-                DashboardTab.Profile -> StubScreen("Profile — coming soon")
+                DashboardTab.Profile -> ProfileScreen()
             }
         }
     }
