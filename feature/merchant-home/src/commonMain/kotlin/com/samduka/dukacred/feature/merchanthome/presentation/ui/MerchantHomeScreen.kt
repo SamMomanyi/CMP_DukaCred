@@ -1,5 +1,6 @@
 package com.samduka.dukacred.feature.merchanthome.presentation.ui
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -39,6 +40,7 @@ private fun formatMoney(amountCents: Long, currency: String = "KES"): String {
     return "$currency $intPart.$fracPart"
 }
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun MerchantHomeScreen(
     state: MerchantHomeState = MerchantHomeState.fakeState,
@@ -46,55 +48,62 @@ fun MerchantHomeScreen(
     onPay: () -> Unit = {},
     onHistory: () -> Unit = {},
     onNotifications: () -> Unit = {},
+    onRefresh: () -> Unit = { println("TODO: Refreshing data") },
 ) {
     Scaffold(
         containerColor = DukaCredColors.ForestGreen900,
     ) { innerPadding ->
-        LazyColumn(
+        PullToRefreshBox(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            contentPadding = PaddingValues(bottom = 32.dp),
+            isRefreshing = state.isRefreshing,
+            onRefresh = onRefresh,
         ) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(bottom = 32.dp),
+            ) {
 
-            item {
-                DashboardHeader(
-                    merchantName = state.merchantName,
-                    onNotificationsClick = onNotifications
-                )
-            }
-
-            item {
-                CreditHeroCard(
-                    state = state,
-                    modifier = Modifier.padding(horizontal = 20.dp)
-                )
-            }
-
-            item {
-                QuickActions(
-                    onCaptureInvoice = onCaptureInvoice,
-                    onPay = onPay,
-                    onHistory = onHistory,
-                    modifier = Modifier.padding(20.dp)
-                )
-            }
-
-            item {
-                ObligationsHeader(
-                    count = state.obligations.size,
-                    modifier = Modifier.padding(horizontal = 20.dp)
-                )
-            }
-
-            if (state.obligations.isEmpty()) {
-                item { EmptyState() }
-            } else {
-                items(state.obligations) {
-                    ObligationCard(
-                        obligation = it,
-                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)
+                item {
+                    DashboardHeader(
+                        merchantName = state.merchantName,
+                        onNotificationsClick = onNotifications
                     )
+                }
+
+                item {
+                    CreditHeroCard(
+                        state = state,
+                        modifier = Modifier.padding(horizontal = 20.dp)
+                    )
+                }
+
+                item {
+                    QuickActions(
+                        onCaptureInvoice = onCaptureInvoice,
+                        onPay = onPay,
+                        onHistory = onHistory,
+                        modifier = Modifier.padding(20.dp)
+                    )
+                }
+
+                item {
+                    ObligationsHeader(
+                        count = state.obligations.size,
+                        modifier = Modifier.padding(horizontal = 20.dp)
+                    )
+                }
+
+                if (state.obligations.isEmpty()) {
+                    item { EmptyState() }
+                } else {
+                    items(state.obligations) {
+                        ObligationCard(
+                            obligation = it,
+                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)
+                        )
+                    }
                 }
             }
         }

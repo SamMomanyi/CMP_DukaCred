@@ -38,6 +38,7 @@ data class MerchantHomeState(
     val totalCreditLimit: Money = Money.ZERO,
     val obligations: List<ObligationUiModel> = emptyList(),
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val errorMessage: String? = null,
 ) : UiState {
     val creditUsageFraction: Float
