@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.samduka.dukacred.app.presentation.AnimatedSplashScreen
 import com.samduka.dukacred.core.designsystem.DukaCredColors
 import com.samduka.dukacred.feature.auth.presentation.ui.AdminSignInScreen
 import com.samduka.dukacred.feature.auth.presentation.ui.MerchantSignInScreen
@@ -25,8 +26,17 @@ fun AppNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = AppRoute.AuthGraph
+        startDestination = AppRoute.Splash
     ) {
+        composable<AppRoute.Splash> {
+            AnimatedSplashScreen(
+                onSplashFinished = {
+                    navController.navigate(AppRoute.AuthGraph) {
+                        popUpTo(AppRoute.Splash) { inclusive = true }
+                    }
+                }
+            )
+        }
 
         // ── AUTH GRAPH ───────────────────────────────────────────────
         navigation<AppRoute.AuthGraph>(startDestination = AppRoute.RolePicker) {
