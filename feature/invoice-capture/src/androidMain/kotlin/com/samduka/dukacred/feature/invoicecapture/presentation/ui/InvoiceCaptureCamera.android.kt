@@ -2,13 +2,17 @@ package com.samduka.dukacred.feature.invoicecapture.presentation.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.preat.peekaboo.ui.camera.CameraMode
+import com.preat.peekaboo.ui.camera.PeekabooCamera
+import com.preat.peekaboo.ui.camera.PeekabooCameraState
+import com.preat.peekaboo.ui.camera.rememberPeekabooCameraState
 import io.github.onseok.peekaboo.ui.CameraMode
 import io.github.onseok.peekaboo.ui.PeekabooCamera
 import io.github.onseok.peekaboo.ui.PeekabooCameraState
 import io.github.onseok.peekaboo.ui.rememberPeekabooCameraState
 
 actual class InvoiceCaptureCameraController(
-    private val state: PeekabooCameraState
+    val state: PeekabooCameraState
 ) {
     actual val isCameraReady: Boolean
         get() = state.isCameraReady
