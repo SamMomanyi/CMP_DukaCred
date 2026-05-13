@@ -47,9 +47,7 @@ kotlin {
             implementation(project(":core:common"))
             implementation(project(":core:designsystem"))
 
-            //peekaboo
-            implementation(libs.peekaboo.ui)
-            implementation(libs.peekaboo.image.picker)
+
         }
 
         androidMain.dependencies {
