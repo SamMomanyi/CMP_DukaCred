@@ -124,9 +124,18 @@ fun AppNavigation() {
 
             composable<AppRoute.InvoiceCapture> {
                 InvoiceCaptureScreen(
-                    onClose = { navController.popBackStack() }
-                )
+                    onClose = {
+                        navController.popBackStack()
+                    },
+                    onImageCaptured = { bytes ->
+                        // 1. Log for testing
+                        println("DukaCred: Image captured successfully. Size: ${bytes.size}")
 
+                        // 2. Future: Pass these bytes to your AWS Bedrock ViewModel
+                        // For now, we pop back to the dashboard after a successful capture
+                        navController.popBackStack()
+                    }
+                )
             }
         }
     }

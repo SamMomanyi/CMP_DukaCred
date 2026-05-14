@@ -54,7 +54,7 @@ fun InvoiceCaptureScreen(
     modifier: Modifier = Modifier,
 ) {
     var activeWarning by remember { mutableStateOf<CaptureWarning?>(null) }
-    val isShaking by rememberIsShaking(thresholdG = 1.2f)
+    val isShaking by rememberIsShaking(thresholdG = 1.05f)
 
     LaunchedEffect(activeWarning) {
         if (activeWarning != null) {
