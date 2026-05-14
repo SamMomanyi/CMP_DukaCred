@@ -1,4 +1,3 @@
-// feature/invoicecapture/src/commonMain/kotlin/.../ui/ScannerOverlay.kt
 package com.samduka.dukacred.feature.invoicecapture.presentation.ui
 
 import androidx.compose.animation.core.*
@@ -31,8 +30,10 @@ fun ScannerOverlay(modifier: Modifier = Modifier) {
     )
 
     Canvas(modifier = modifier.fillMaxSize()) {
-        val cutoutW = size.width  * 0.82f
-        val cutoutH = size.height * 0.55f
+        // 🚀 EXPANDED THE CUTOUT SIZE HERE
+        val cutoutW = size.width  * 0.90f // Was 0.82f
+        val cutoutH = size.height * 0.72f // Was 0.55f
+
         val cutoutL = (size.width  - cutoutW) / 2f
         val cutoutT = (size.height - cutoutH) / 2f
         val cornerR = 20.dp.toPx()
