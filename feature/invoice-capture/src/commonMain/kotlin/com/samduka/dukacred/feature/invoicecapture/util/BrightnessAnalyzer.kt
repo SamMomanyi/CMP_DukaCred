@@ -19,4 +19,4 @@ fun analyzeBrightness(imageBytes: ByteArray): Float {
     return if (count == 0) 1f else (sum.toFloat() / count) / 255f
 }
 
-const val BRIGHTNESS_THRESHOLD = 0.25f
+const val BRIGHTNESS_THRESHOLD = 0.40f // Needs a well-lit room now
