@@ -126,6 +126,7 @@ fun AppNavigation() {
                 InvoiceCaptureScreen(
                     onClose = { navController.popBackStack() }
                 )
+
             }
         }
     }

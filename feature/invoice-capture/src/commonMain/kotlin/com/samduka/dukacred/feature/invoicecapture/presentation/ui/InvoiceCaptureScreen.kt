@@ -44,10 +44,6 @@ import kotlinx.coroutines.delay
 
 // ── Warning model ─────────────────────────────────────────────────────────────
 
-sealed interface CaptureWarning {
-    data object LowLight : CaptureWarning
-    data object Shaking  : CaptureWarning
-}
 
 // ── Screen ────────────────────────────────────────────────────────────────────
 
