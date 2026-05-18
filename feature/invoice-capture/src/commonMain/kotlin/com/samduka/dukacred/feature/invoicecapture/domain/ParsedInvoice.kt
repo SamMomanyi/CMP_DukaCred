@@ -1,4 +1,4 @@
-package com.samduka.dukacred.feature.invoicecapture.domain.model
+package com.samduka.dukacred.feature.invoicecapture.domain
 
 /**
  * The structured data we expect Claude 3.5 Sonnet to extract
