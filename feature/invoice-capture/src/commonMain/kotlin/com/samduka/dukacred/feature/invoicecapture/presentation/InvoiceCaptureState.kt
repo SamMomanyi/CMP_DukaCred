@@ -1,5 +1,6 @@
 package com.samduka.dukacred.feature.invoicecapture.presentation
 
+import com.samduka.dukacred.feature.invoicecapture.domain.ParsedInvoice
 import com.samduka.dukacred.feature.invoicecapture.domain.model.ParsedInvoice
 
 /**
