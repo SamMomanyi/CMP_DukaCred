@@ -1,0 +1,23 @@
+package com.samduka.dukacred.feature.inventory.domain.repository
+
+import com.samduka.dukacred.feature.inventory.domain.model.InventoryItem
+import kotlinx.coroutines.flow.Flow
+
+/**
+ * The single source of truth for the merchant's stock.
+ * The eventual implementation will connect to our local SQLDelight database.
+ */
+interface InventoryRepository {
+
+    // 1. Get a live stream of everything on the shelves
+    fun getAllItems(): Flow<List<InventoryItem>>
+
+    // 2. Get a quick list of items that are almost sold out (for the dashboard)
+    fun getLowStockItems(): Flow<List<InventoryItem>>
+
+    // 3. Add a brand new product from the invoice scanner, or update an existing one
+    suspend fun saveItem(item: InventoryItem)
+
+    // 4. Someone just bought something, reduce the stock!
+    suspend fun deductStock(itemId: String, quantitySold: Int)
+}
