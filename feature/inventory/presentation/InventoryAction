@@ -1,0 +1,18 @@
+package com.samduka.dukacred.feature.inventory.presentation
+
+/**
+ * Every possible action the merchant can take on the Inventory screen.
+ */
+sealed interface InventoryIntent {
+    // Typing in the search bar to find a product
+    data class SearchQueryChanged(val query: String) : InventoryIntent
+
+    // Quick button to manually deduct stock when someone buys an item
+    data class RecordSale(val itemId: String, val quantity: Int) : InventoryIntent
+
+    // Clicking the floating action button to scan a new invoice
+    data object AddStockClicked : InventoryIntent
+
+    // Swiping down to refresh the list
+    data object RefreshInventory : InventoryIntent
+}
