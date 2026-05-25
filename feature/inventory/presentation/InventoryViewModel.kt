@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 class InventoryViewModel : ViewModel() {
 
     // 1. The Single Source of Truth for the UI
-    private val _state = MutableStateFlow(InventoryState())
+    private val _state = MutableStateFlow(InventoryState())sudo
     val state = _state.asStateFlow()
 
     // 2. The switchboard for user actions

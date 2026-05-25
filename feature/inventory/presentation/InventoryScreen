@@ -1,0 +1,47 @@
+package com.samduka.dukacred.feature.inventory.presentation
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+
+/**
+ * The main dashboard for the merchant's Duka inventory.
+ * Strictly observes the ViewModel state and delegates actions via intents.
+ */
+@Composable
+fun InventoryScreen(
+    viewModel: InventoryViewModel
+) {
+    // 1. Observe the single source of truth
+    val state by viewModel.state.collectAsState()
+
+    // 2. React to the state changes
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        when {
+            state.isLoading -> {
+                // TODO: Replace with a nice loading spinner or skeleton UI
+                Text("Loading Inventory...")
+            }
+            state.errorMessage != null -> {
+                // TODO: Replace with an error card and retry button
+                Text("Error: ${state.errorMessage}")
+            }
+            state.allItems.isEmpty() -> {
+                // TODO: Replace with a nice empty state graphic (e.g., "Scan an invoice to add stock!")
+                Text("Your shelves are empty. Time to stock up!")
+            }
+            else -> {
+                // TODO: Replace with a LazyColumn showing all InventoryItems
+                Text("Displaying ${state.allItems.size} items in stock.")
+            }
+        }
+    }
+}
