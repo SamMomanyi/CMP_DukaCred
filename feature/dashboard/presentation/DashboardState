@@ -1,0 +1,12 @@
+package com.samduka.dukacred.feature.dashboard.presentation
+
+/**
+ * Represents the high-level overview data shown on the merchant's home screen.
+ */
+data class DashboardState(
+    val todaySalesTotal: Double = 0.0,
+    val activeInventoryCount: Int = 0,
+    val lowStockAlertCount: Int = 0,
+    val isLoading: Boolean = true,
+    val merchantName: String = "My Duka"
+)
