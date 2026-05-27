@@ -1,0 +1,16 @@
+package com.samduka.dukacred.feature.dashboard.presentation
+
+/**
+ * Represents one-time side effects triggered from the home screen.
+ * Mostly used for routing the merchant to other feature modules.
+ */
+sealed interface DashboardEffect {
+    // Navigate over to the Invoice Capture feature
+    data object NavigateToScanner : DashboardEffect
+
+    // Navigate over to the Inventory list feature
+    data object NavigateToInventory : DashboardEffect
+
+    // Show a quick toast/snackbar if the data failed to load
+    data class ShowSnackbar(val message: String) : DashboardEffect
+}
