@@ -1,0 +1,15 @@
+package com.samduka.dukacred.feature.dashboard.presentation
+
+/**
+ * Represents every action a merchant can take on the main home screen.
+ */
+sealed interface DashboardIntent {
+    // Swiping down to refresh today's sales numbers
+    data object RefreshDashboard : DashboardIntent
+
+    // Clicking the big primary button to scan a new invoice
+    data object QuickScanClicked : DashboardIntent
+
+    // Clicking the "View All" on the low stock widget
+    data object InventoryShortcutClicked : DashboardIntent
+}
