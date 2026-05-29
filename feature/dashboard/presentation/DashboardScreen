@@ -1,0 +1,46 @@
+package com.samduka.dukacred.feature.dashboard.presentation
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+
+/**
+ * The main home screen for the DukaCred app.
+ * Displays high-level stats and provides quick actions for the merchant.
+ */
+@Composable
+fun DashboardScreen(
+    viewModel: DashboardViewModel
+) {
+    // 1. Observe the single source of truth
+    val state by viewModel.state.collectAsState()
+
+    // 2. Render the state
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (state.isLoading) {
+            // TODO: Replace with a nice skeleton loading animation
+            Text("Loading your Duka stats...")
+        } else {
+            // TODO: Style this into beautiful cards later
+            Text("Welcome back, ${state.merchantName}!")
+            Text("Today's Sales: KES ${state.todaySalesTotal}")
+            Text("Active Items on Shelf: ${state.activeInventoryCount}")
+
+            if (state.lowStockAlertCount > 0) {
+                Text("⚠️ ${state.lowStockAlertCount} items are running low!")
+            }
+
+            // TODO: Add the big 'Scan Invoice' Floating Action Button
+        }
+    }
+}
