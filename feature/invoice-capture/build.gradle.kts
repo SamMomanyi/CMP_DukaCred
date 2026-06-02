@@ -53,6 +53,12 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.peekaboo.ui)
             implementation(libs.peekaboo.image.picker)
+
+            // Add the CameraX and ML Kit native dependencies here
+            implementation(libs.androidx.camera.camera2)
+            implementation(libs.androidx.camera.lifecycle)
+            implementation(libs.androidx.camera.view)
+            implementation(libs.mlkit.text.recognition)
         }
 
         iosMain.dependencies {
