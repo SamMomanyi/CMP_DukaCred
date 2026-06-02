@@ -145,14 +145,41 @@ actual class InvoiceCaptureCameraController(
         }
 
         val inputImage = InputImage.fromMediaImage(mediaImage, proxy.imageInfo.rotationDegrees)
+//        textRecognizer.process(inputImage)
+//            .addOnSuccessListener(mainExecutor) { text ->
+//                _hasInvoiceText = isInvoiceStructurePresent(text)
+//            }
+//            .addOnFailureListener(mainExecutor) {
+//                _hasInvoiceText = false
+//            }
+//            // Always close on complete — unblocks the next frame from CameraX
+//            .addOnCompleteListener(mainExecutor) { proxy.close() }
+
         textRecognizer.process(inputImage)
             .addOnSuccessListener(mainExecutor) { text ->
+                // ========================================================
+                // 🕵️ DEBUG LOG: Let's see exactly what ML Kit is reading!
+                // ========================================================
+                android.util.Log.d("ML_KIT_DEBUG", "--- VISION ENGINE START LOG ---")
+                if (text.text.isEmpty()) {
+                    android.util.Log.w("ML_KIT_DEBUG", "Found NO text in this frame.")
+                } else {
+                    android.util.Log.d("ML_KIT_DEBUG", "Raw Interpreted Text:\n${text.text}")
+
+                    // Log each individual block of text it finds
+                    text.textBlocks.forEachIndexed { index, block ->
+                        android.util.Log.d("ML_KIT_DEBUG", "Block $index: ${block.text.replace("\n", " ")}")
+                    }
+                }
+                android.util.Log.d("ML_KIT_DEBUG", "--- VISION ENGINE END LOG ---")
+                // ========================================================
+
                 _hasInvoiceText = isInvoiceStructurePresent(text)
             }
-            .addOnFailureListener(mainExecutor) {
+            .addOnFailureListener(mainExecutor) { e ->
+                android.util.Log.e("ML_KIT_DEBUG", "ML Kit failed to process image", e)
                 _hasInvoiceText = false
             }
-            // Always close on complete — unblocks the next frame from CameraX
             .addOnCompleteListener(mainExecutor) { proxy.close() }
     }
 
