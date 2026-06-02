@@ -12,12 +12,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 
 import androidx.compose.ui.draw.clip
-
+import androidx.compose.runtime.collectAsState
+import org.koin.compose.viewmodel.koinViewModel
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.samduka.dukacred.feature.invoicecapture.presentation.*
 import com.samduka.dukacred.feature.invoicecapture.sensor.rememberIsShaking
 import kotlinx.coroutines.delay
@@ -73,9 +72,9 @@ fun InvoiceCaptureScreen(
     onClose: () -> Unit,
     onImageCaptured: (ByteArray) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: InvoiceCaptureViewModel = viewModel(),
+    viewModel: InvoiceCaptureViewModel = koinViewModel(),
 ) {
-    val uiState  by viewModel.state.collectAsStateWithLifecycle()
+    val uiState by viewModel.state.collectAsState()
     val isShaking by rememberIsShaking(thresholdG = 1.05f)
 
     // ── Camera controller ──────────────────────────────────────────────────────
