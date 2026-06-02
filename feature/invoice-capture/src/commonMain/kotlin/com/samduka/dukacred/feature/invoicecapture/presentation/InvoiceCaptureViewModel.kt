@@ -1,41 +1,85 @@
+// commonMain/.../presentation/InvoiceCaptureViewModel.kt
 package com.samduka.dukacred.feature.invoicecapture.presentation
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
-/**
- * The brain of the OCR scanning screen.
- * Listens to user intents, updates the UI state, and fires one-time effects.
- */
 class InvoiceCaptureViewModel : ViewModel() {
 
-    // 1. The Single Source of Truth for the UI
     private val _state = MutableStateFlow<InvoiceCaptureState>(InvoiceCaptureState.Idle)
     val state = _state.asStateFlow()
 
-    // 2. The One-Time Event Channel (Navigations, Toasts)
     private val _effect = MutableSharedFlow<InvoiceCaptureEffect>()
     val effect = _effect.asSharedFlow()
 
-    // 3. The specific actions the UI can tell us to do
+    private var countdownJob: Job? = null
+
+    // ── Intent router ──────────────────────────────────────────────────────────
     fun onIntent(intent: InvoiceCaptureIntent) {
         when (intent) {
-            is InvoiceCaptureIntent.TakePictureClicked -> {
-                // TODO: Trigger camera launch
-            }
-            is InvoiceCaptureIntent.ImageCaptured -> {
-                _state.value = InvoiceCaptureState.Scanning
-                // TODO: Send imageBytes to the OCR Repository
-            }
-            is InvoiceCaptureIntent.RetakeClicked -> {
-                _state.value = InvoiceCaptureState.Idle
-            }
-            is InvoiceCaptureIntent.ConfirmInvoiceClicked -> {
-                // TODO: Save to DB and trigger NavigateToDashboard effect
-            }
+            InvoiceCaptureIntent.AutoCaptureReady      -> startCountdown()
+            InvoiceCaptureIntent.AutoCaptureCancelled  -> cancelCountdown()
+            InvoiceCaptureIntent.TakePictureClicked    -> triggerManualCapture()
+            is InvoiceCaptureIntent.ImageCaptured      -> handleImageCaptured(intent.imageBytes)
+            InvoiceCaptureIntent.CaptureFailed         -> resetToIdle()
+            InvoiceCaptureIntent.RetakeClicked         -> resetToIdle()
+            InvoiceCaptureIntent.ConfirmInvoiceClicked -> navigateToDashboard()
         }
+    }
+
+    // ── Auto-capture ───────────────────────────────────────────────────────────
+
+    private fun startCountdown() {
+        // Guard: only start from Idle — prevents restarting a live countdown
+        if (_state.value !is InvoiceCaptureState.Idle) return
+        countdownJob?.cancel()
+        countdownJob = viewModelScope.launch {
+            for (tick in 3 downTo 1) {
+                _state.value = InvoiceCaptureState.AutoCapturing(tick)
+                delay(1_000)
+            }
+            // Countdown complete — hand off to the camera
+            _state.value = InvoiceCaptureState.Scanning
+            _effect.emit(InvoiceCaptureEffect.TriggerCapture)
+        }
+    }
+
+    private fun cancelCountdown() {
+        if (_state.value is InvoiceCaptureState.AutoCapturing) {
+            countdownJob?.cancel()
+            _state.value = InvoiceCaptureState.Idle
+        }
+    }
+
+    // ── Manual capture ─────────────────────────────────────────────────────────
+    private fun triggerManualCapture() {
+        countdownJob?.cancel()
+        viewModelScope.launch {
+            _state.value = InvoiceCaptureState.Scanning
+            _effect.emit(InvoiceCaptureEffect.TriggerCapture)
+        }
+    }
+
+    // ── Post-capture ───────────────────────────────────────────────────────────
+    private fun handleImageCaptured(bytes: ByteArray) {
+        countdownJob?.cancel()
+        _state.value = InvoiceCaptureState.Scanning
+        // TODO: viewModelScope.launch { repository.processAndSaveInvoice(bytes) }
+    }
+
+    private fun resetToIdle() {
+        countdownJob?.cancel()
+        _state.value = InvoiceCaptureState.Idle
+    }
+
+    private fun navigateToDashboard() {
+        viewModelScope.launch { _effect.emit(InvoiceCaptureEffect.NavigateToDashboard) }
     }
 }
