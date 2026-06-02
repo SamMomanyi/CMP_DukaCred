@@ -1,5 +1,6 @@
 package com.samduka.dukacred.feature.invoicecapture.presentation.ui
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +18,9 @@ private val OverlayColor   = Color(0x99000000)  // Black 60%
 private val LaserColor     = Color(0xFFE5A93C)
 
 @Composable
-fun ScannerOverlay(modifier: Modifier = Modifier) {
+fun ScannerOverlay(modifier: Modifier = Modifier,
+                   isDocumentDetected: Boolean = false
+                   ) {
     val infiniteTransition = rememberInfiniteTransition(label = "laser")
     val laserFraction by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -29,6 +32,12 @@ fun ScannerOverlay(modifier: Modifier = Modifier) {
         label = "laserFraction"
     )
 
+    val cutoutColor by animateColorAsState(
+        targetValue = if (isDocumentDetected) Color(0xFF4CAF50) else Color(0xFFE5A93C),
+        animationSpec = tween(durationMillis = 400),
+        label = "cutout_color",
+    )
+    val laserColor = cutoutColor
     Canvas(modifier = modifier.fillMaxSize()) {
         // 🚀 EXPANDED THE CUTOUT SIZE HERE
         val cutoutW = size.width  * 0.90f // Was 0.82f
