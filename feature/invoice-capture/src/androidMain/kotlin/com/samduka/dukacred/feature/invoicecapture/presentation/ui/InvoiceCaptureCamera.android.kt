@@ -28,7 +28,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.preat.peekaboo.ui.camera.CameraMode
 import com.preat.peekaboo.ui.camera.PeekabooCamera
 import com.preat.peekaboo.ui.camera.PeekabooCameraState
@@ -234,11 +236,12 @@ actual class InvoiceCaptureCameraController(
 actual fun rememberInvoiceCaptureCameraController(
     onCapture: (ByteArray?) -> Unit
 ): InvoiceCaptureCameraController {
+    val context = LocalContext.current
     val state = rememberPeekabooCameraState(
         initialCameraMode = CameraMode.Back,
         onCapture = onCapture
     )
-    return remember(state) { InvoiceCaptureCameraController(state) }
+    return remember(state) { InvoiceCaptureCameraController(context,onCapture) }
 }
 
 @Composable
@@ -248,6 +251,8 @@ actual fun InvoiceCapturePreview(
     permissionDeniedContent: @Composable () -> Unit
 ) {
     val context = LocalContext.current
+    // We need the lifecycle owner to bind the native CameraX feed
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     // 1. Check if we ALREADY have permission
     var hasPermission by remember {
@@ -275,10 +280,19 @@ actual fun InvoiceCapturePreview(
 
     // 4. Render conditionally based on the OS response
     if (hasPermission) {
-        PeekabooCamera(
-            state = controller.state,
+        AndroidView(
             modifier = modifier,
-            permissionDeniedContent = permissionDeniedContent // Fallback just in case
+            factory = { ctx ->
+                PreviewView(ctx).apply {
+                    scaleType = PreviewView.ScaleType.FILL_CENTER
+                    // Required for ImageAnalysis to run concurrently with Preview
+                    implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+                }
+            },
+            update = { previewView ->
+                // Wire the native view to our controller logic
+                controller.bindCamera(lifecycleOwner, previewView)
+            }
         )
     } else {
         permissionDeniedContent()
