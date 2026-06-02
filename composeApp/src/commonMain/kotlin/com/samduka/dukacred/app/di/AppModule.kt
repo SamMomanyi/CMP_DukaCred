@@ -2,6 +2,7 @@ package com.samduka.dukacred.app.di
 
 import com.samduka.dukacred.core.network.di.networkModule
 import com.samduka.dukacred.feature.auth.di.authModule
+import com.samduka.dukacred.feature.invoicecapture.di.invoiceCaptureModule
 import org.koin.core.module.Module
 
 /**
@@ -11,5 +12,5 @@ import org.koin.core.module.Module
 val appModules: List<Module> = listOf(
     networkModule,
     authModule,
-
+    invoiceCaptureModule
 )

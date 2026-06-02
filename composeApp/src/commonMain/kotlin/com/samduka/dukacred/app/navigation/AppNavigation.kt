@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.samduka.dukacred.app.presentation.AnimatedSplashScreen
+import com.samduka.dukacred.app.presentation.DashboardShellScreen
 import com.samduka.dukacred.core.designsystem.DukaCredColors
 import com.samduka.dukacred.feature.auth.presentation.ui.AdminSignInScreen
 import com.samduka.dukacred.feature.auth.presentation.ui.MerchantSignInScreen

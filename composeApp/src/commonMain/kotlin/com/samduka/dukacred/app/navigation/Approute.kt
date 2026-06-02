@@ -6,10 +6,10 @@ sealed class AppRoute {
     data object Splash : AppRoute()
 
     @Serializable
-    data object AuthGraph : AppRoute
+    data object AuthGraph
 
     @Serializable
-    data object MainGraph : AppRoute
+    data object MainGraph
 
     @Serializable
     data object RolePicker : AppRoute()
