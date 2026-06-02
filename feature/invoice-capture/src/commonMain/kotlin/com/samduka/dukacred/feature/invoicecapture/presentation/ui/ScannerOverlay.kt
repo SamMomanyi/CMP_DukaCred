@@ -22,6 +22,7 @@ fun ScannerOverlay(modifier: Modifier = Modifier,
                    isDocumentDetected: Boolean = false
                    ) {
     val infiniteTransition = rememberInfiniteTransition(label = "laser")
+
     val laserFraction by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue  = 1f,

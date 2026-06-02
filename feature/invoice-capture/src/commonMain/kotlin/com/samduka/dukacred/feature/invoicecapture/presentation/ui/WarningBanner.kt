@@ -25,6 +25,8 @@ fun WarningBanner(warning: CaptureWarning?, modifier: Modifier = Modifier) {
         val (bg, text) = when (warning) {
             CaptureWarning.LowLight -> Color(0xCC1A0000) to "⚠️  Low light detected — move to a brighter area and retake"
             CaptureWarning.Shaking  -> Color(0xCCD94F4F) to "📵  Hold phone steady"
+            CaptureWarning.NoTextDetected ->
+                Color(0xCC0D2B3E) to "🔍  Point at an invoice to begin scanning"
             null                    -> Color.Transparent to ""
         }
         Box(
