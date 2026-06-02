@@ -10,19 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.*
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.unit.dp
 
-private val CutoutColor    = Color(0xFFE5A93C)
-private val OverlayColor   = Color(0x99000000)  // Black 60%
-private val LaserColor     = Color(0xFFE5A93C)
-
 @Composable
-fun ScannerOverlay(modifier: Modifier = Modifier,
-                   isDocumentDetected: Boolean = false
-                   ) {
+fun ScannerOverlay(
+    modifier: Modifier = Modifier,
+    isDocumentDetected: Boolean = false
+) {
     val infiniteTransition = rememberInfiniteTransition(label = "laser")
-
     val laserFraction by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue  = 1f,
@@ -33,65 +28,63 @@ fun ScannerOverlay(modifier: Modifier = Modifier,
         label = "laserFraction"
     )
 
-    val cutoutColor by animateColorAsState(
+    // Turn green when an invoice is perfectly aligned and lit
+    val activeColor by animateColorAsState(
         targetValue = if (isDocumentDetected) Color(0xFF4CAF50) else Color(0xFFE5A93C),
         animationSpec = tween(durationMillis = 400),
         label = "cutout_color",
     )
-    val laserColor = cutoutColor
-    Canvas(modifier = modifier.fillMaxSize()) {
-        // 🚀 EXPANDED THE CUTOUT SIZE HERE
-        val cutoutW = size.width  * 0.90f // Was 0.82f
-        val cutoutH = size.height * 0.72f // Was 0.55f
+    val overlayColor = Color(0x99000000) // 60% Black
+
+    Canvas(
+        modifier = modifier
+            .fillMaxSize()
+            // Isolates the BlendMode.Clear to just this layer to prevent black screen bug
+            .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+    ) {
+        val cutoutW = size.width  * 0.90f
+        val cutoutH = size.height * 0.72f
 
         val cutoutL = (size.width  - cutoutW) / 2f
         val cutoutT = (size.height - cutoutH) / 2f
         val cornerR = 20.dp.toPx()
 
-        val cutoutRect = RoundRect(
-            left         = cutoutL,
-            top          = cutoutT,
-            right        = cutoutL + cutoutW,
-            bottom       = cutoutT + cutoutH,
-            cornerRadius = CornerRadius(cornerR)
+        // 1. Draw the dark transparent scrim over the entire screen
+        drawRect(color = overlayColor)
+
+        // 2. Punch out the clear hole for the camera to show through
+        drawRoundRect(
+            color = Color.Transparent,
+            topLeft = Offset(cutoutL, cutoutT),
+            size = Size(cutoutW, cutoutH),
+            cornerRadius = CornerRadius(cornerR),
+            blendMode = BlendMode.Clear
         )
 
-        // ── Dark overlay with punched-out cutout ──────────────────────
-        drawIntoCanvas { canvas ->
-            val paint = Paint().apply {
-                color = OverlayColor
-                blendMode = BlendMode.SrcOver
-            }
-            // Fill the whole screen
-            canvas.drawRect(Rect(Offset.Zero, size), paint)
+        // 3. Draw the glowing border around the cutout using the ANIMATED activeColor
+        drawRoundRect(
+            color = activeColor.copy(alpha = 0.3f),
+            topLeft = Offset(cutoutL, cutoutT),
+            size = Size(cutoutW, cutoutH),
+            cornerRadius = CornerRadius(cornerR),
+            style = Stroke(width = 8.dp.toPx())
+        )
+        drawRoundRect(
+            color = activeColor,
+            topLeft = Offset(cutoutL, cutoutT),
+            size = Size(cutoutW, cutoutH),
+            cornerRadius = CornerRadius(cornerR),
+            style = Stroke(width = 2.dp.toPx())
+        )
 
-            // Clear the cutout
-            val clearPaint = Paint().apply {
-                blendMode = BlendMode.Clear
-            }
-            canvas.drawRoundRect(
-                left   = cutoutL, top    = cutoutT,
-                right  = cutoutL + cutoutW, bottom = cutoutT + cutoutH,
-                radiusX = cornerR, radiusY = cornerR,
-                paint  = clearPaint
-            )
-        }
-
-        // ── Glowing amber border ──────────────────────────────────────
-        val path = Path().apply { addRoundRect(cutoutRect) }
-        // outer soft glow
-        drawPath(path, CutoutColor.copy(alpha = 0.3f), style = Stroke(width = 8.dp.toPx()))
-        // crisp inner line
-        drawPath(path, CutoutColor, style = Stroke(width = 2.dp.toPx()))
-
-        // ── Laser line ───────────────────────────────────────────────
+        // 4. Draw the animated scanning laser using the ANIMATED activeColor
         val laserY = cutoutT + laserFraction * cutoutH
         val laserBrush = Brush.horizontalGradient(
             colors = listOf(
                 Color.Transparent,
-                LaserColor.copy(alpha = 0.9f),
-                LaserColor,
-                LaserColor.copy(alpha = 0.9f),
+                activeColor.copy(alpha = 0.9f),
+                activeColor,
+                activeColor.copy(alpha = 0.9f),
                 Color.Transparent,
             ),
             startX = cutoutL,
