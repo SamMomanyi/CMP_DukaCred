@@ -208,17 +208,19 @@ fun InvoiceCaptureScreen(
 expect class InvoiceCaptureCameraController {
     val isCameraReady: Boolean
     val isCapturing: Boolean
+    val hasInvoiceText: Boolean    // ← ML Kit: structured invoice text visible
+    val hasAdequateLight: Boolean  // ← real-time Y-plane brightness ≥ threshold
     fun capture()
 }
 
 @Composable
 expect fun rememberInvoiceCaptureCameraController(
-    onCapture: (ByteArray?) -> Unit
+    onCapture: (ByteArray?) -> Unit,
 ): InvoiceCaptureCameraController
 
 @Composable
 expect fun InvoiceCapturePreview(
     controller: InvoiceCaptureCameraController,
     modifier: Modifier,
-    permissionDeniedContent: @Composable () -> Unit
+    permissionDeniedContent: @Composable () -> Unit,
 )
