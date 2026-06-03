@@ -20,6 +20,8 @@ import com.samduka.dukacred.feature.auth.presentation.ui.MerchantSignInScreen
 import com.samduka.dukacred.feature.auth.presentation.ui.RolePickerScreen
 import com.samduka.dukacred.feature.auth.presentation.ui.SignUpScreen
 import com.samduka.dukacred.feature.invoicecapture.presentation.ui.InvoiceCaptureScreen
+import com.samduka.dukacred.feature.invoicecapture.domain.InvoiceImageCache
+import org.koin.compose.koinInject
 
 @Composable
 fun AppNavigation() {
@@ -51,12 +53,12 @@ fun AppNavigation() {
                         navController.navigate(AppRoute.AdminSignIn)
                     },
                     onNavigateToMerchantHome = {
-                        navController.navigate(AppRoute.MainGraph) {
+                        navController.navigate(AppRoute.MerchantGraph) {
                             popUpTo(AppRoute.AuthGraph) { inclusive = true }
                         }
                     },
                     onNavigateToAdminQueue = {
-                        navController.navigate(AppRoute.MainGraph) {
+                        navController.navigate(AppRoute.AdminGraph) {
                             popUpTo(AppRoute.AuthGraph) { inclusive = true }
                         }
                     }
@@ -66,7 +68,7 @@ fun AppNavigation() {
             composable<AppRoute.MerchantSignIn> {
                 MerchantSignInScreen(
                     onNavigateToMerchantHome = {
-                        navController.navigate(AppRoute.MainGraph) {
+                        navController.navigate(AppRoute.MerchantGraph) {
                             popUpTo(AppRoute.AuthGraph) { inclusive = true }
                         }
                     },
@@ -80,7 +82,7 @@ fun AppNavigation() {
             composable<AppRoute.AdminSignIn> {
                 AdminSignInScreen(
                     onNavigateToAdminQueue = {
-                        navController.navigate(AppRoute.MainGraph) {
+                        navController.navigate(AppRoute.AdminGraph) {
                             popUpTo(AppRoute.AuthGraph) { inclusive = true }
                         }
                     },
@@ -94,12 +96,12 @@ fun AppNavigation() {
             composable<AppRoute.SignUp> {
                 SignUpScreen(
                     onNavigateToMerchantHome = {
-                        navController.navigate(AppRoute.MainGraph) {
+                        navController.navigate(AppRoute.MerchantGraph) {
                             popUpTo(AppRoute.AuthGraph) { inclusive = true }
                         }
                     },
                     onNavigateToAdminQueue = {
-                        navController.navigate(AppRoute.MainGraph) {
+                        navController.navigate(AppRoute.AdminGraph) {
                             popUpTo(AppRoute.AuthGraph) { inclusive = true }
                         }
                     },
@@ -108,8 +110,8 @@ fun AppNavigation() {
             }
         }
 
-        // ── MAIN GRAPH ───────────────────────────────────────────────
-        navigation<AppRoute.MainGraph>(startDestination = AppRoute.MerchantHome) {
+        // ── MERCHANT GRAPH ───────────────────────────────────────────
+        navigation<AppRoute.MerchantGraph>(startDestination = AppRoute.MerchantHome) {
 
             composable<AppRoute.MerchantHome> {
                 DashboardShellScreen(
@@ -119,24 +121,40 @@ fun AppNavigation() {
                 )
             }
 
-            composable<AppRoute.AdminQueue> {
-                StubScreen("Admin Queue — coming soon")
-            }
-
             composable<AppRoute.InvoiceCapture> {
+                // Inject the cache singleton
+                val imageCache: InvoiceImageCache = koinInject()
+
                 InvoiceCaptureScreen(
                     onClose = {
                         navController.popBackStack()
                     },
                     onImageCaptured = { bytes ->
-                        // 1. Log for testing
-                        println("DukaCred: Image captured successfully. Size: ${bytes.size}")
+                        // 1. Save the massive byte array to the cache
+                        imageCache.capturedImageBytes = bytes
 
-                        // 2. Future: Pass these bytes to your AWS Bedrock ViewModel
-                        // For now, we pop back to the dashboard after a successful capture
+                        // 2. Safely pop the heavy camera screen off the stack
                         navController.popBackStack()
+
+                        // 3. Navigate to the processing screen
+                        navController.navigate(AppRoute.InvoiceProcessing)
                     }
                 )
+            }
+
+            // The new processing screen
+            composable<AppRoute.InvoiceProcessing> {
+                val imageCache: InvoiceImageCache = koinInject()
+
+                // Temporary stub until we build the actual AI API call
+                StubScreen("Processing ${imageCache.capturedImageBytes?.size ?: 0} bytes...")
+            }
+        }
+
+        // ── ADMIN GRAPH ──────────────────────────────────────────────
+        navigation<AppRoute.AdminGraph>(startDestination = AppRoute.AdminQueue) {
+            composable<AppRoute.AdminQueue> {
+                StubScreen("Admin Queue — coming soon")
             }
         }
     }
