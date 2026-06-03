@@ -8,8 +8,12 @@ sealed class AppRoute {
     @Serializable
     data object AuthGraph
 
+    // Replaced MainGraph with specific role graphs
     @Serializable
-    data object MainGraph
+    data object MerchantGraph
+
+    @Serializable
+    data object AdminGraph
 
     @Serializable
     data object RolePicker : AppRoute()
@@ -31,4 +35,8 @@ sealed class AppRoute {
 
     @Serializable
     data object InvoiceCapture : AppRoute()
+
+    // The new screen that will handle sending bytes to AWS
+    @Serializable
+    data object InvoiceProcessing : AppRoute()
 }
