@@ -38,5 +38,9 @@ sealed class AppRoute {
 
     // The new screen that will handle sending bytes to AWS
     @Serializable
+
+    @Serializable
+    data object InvoiceProcessing : AppRoute()
     data object InvoiceProcessing : AppRoute()
 }
+
