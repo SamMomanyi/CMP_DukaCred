@@ -7,8 +7,6 @@ sealed class AppRoute {
 
     @Serializable
     data object AuthGraph
-
-    // Replaced MainGraph with specific role graphs
     @Serializable
     data object MerchantGraph
 
