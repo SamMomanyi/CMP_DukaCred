@@ -63,7 +63,7 @@ class InvoiceCaptureViewModel : ViewModel() {
         countdownJob?.cancel()
         viewModelScope.launch {
             _state.value = InvoiceCaptureState.Scanning
-            _effect.emit(InvoiceCaptureEffect.TriggerCapture)
+            _effect.trySend(InvoiceCaptureEffect.TriggerCapture)
         }
     }
 
