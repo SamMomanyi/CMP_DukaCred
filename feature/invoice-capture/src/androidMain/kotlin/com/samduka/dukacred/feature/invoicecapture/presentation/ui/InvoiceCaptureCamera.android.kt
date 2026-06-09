@@ -18,8 +18,10 @@ import com.samduka.dukacred.feature.invoicecapture.util.BRIGHTNESS_THRESHOLD
 import java.util.concurrent.Executor
 import java.util.concurrent.atomic.AtomicBoolean
 import android.content.pm.PackageManager
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -79,6 +81,7 @@ actual class InvoiceCaptureCameraController(
     actual val hasAdequateLight: Boolean get() = _hasAdequateLight
 
     // ── Camera binding ─────────────────────────────────────────────────────────
+    @RequiresApi(Build.VERSION_CODES.O)
     fun bindCamera(lifecycleOwner: LifecycleOwner, previewView: PreviewView) {
         // Called on every recomposition from AndroidView.update — guard is critical
         if (boundOwner === lifecycleOwner && _isCameraReady) return
@@ -118,6 +121,7 @@ actual class InvoiceCaptureCameraController(
     }
 
     // ── Frame analysis (runs on analysisExecutor — background thread) ──────────
+    @RequiresApi(Build.VERSION_CODES.O)
     @androidx.annotation.OptIn(ExperimentalGetImage::class)
     @OptIn(ExperimentalGetImage::class)
     private fun analyzeFrame(proxy: ImageProxy) {
@@ -184,6 +188,7 @@ actual class InvoiceCaptureCameraController(
     }
 
     // ── Brightness via Y-plane sampling (no byte array copy) ──────────────────
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun yPlaneBrightness(proxy: ImageProxy): Float {
         val plane  = proxy.planes[0]
         val buf    = plane.buffer
@@ -278,6 +283,7 @@ actual fun rememberInvoiceCaptureCameraController(
     return remember(state) { InvoiceCaptureCameraController(context,onCapture) }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 actual fun InvoiceCapturePreview(
     controller: InvoiceCaptureCameraController,

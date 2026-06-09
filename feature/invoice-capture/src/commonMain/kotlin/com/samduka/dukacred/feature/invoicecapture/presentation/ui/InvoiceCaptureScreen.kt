@@ -112,13 +112,24 @@ fun InvoiceCaptureScreen(
 
     // ── Deferred "no text" warning — 2s grace period so it doesn't flash ───────
     var showNoTextWarning by remember { mutableStateOf(false) }
-    LaunchedEffect(cameraController.isCameraReady, cameraController.hasInvoiceText) {
-        if (cameraController.isCameraReady && !cameraController.hasInvoiceText) {
-            delay(2_000)
-            showNoTextWarning = !cameraController.hasInvoiceText
-        } else {
-            showNoTextWarning = false
+    LaunchedEffect(Unit) {
+        snapshotFlow {
+            // snapshotFlow observes every mutableStateOf read inside this lambda,
+            // so any change to any of these four values re-evaluates the block
+            cameraController.isCameraReady    &&
+                    cameraController.hasInvoiceText   &&
+                    cameraController.hasAdequateLight &&
+                    !isShaking
         }
+            .distinctUntilChanged()               // only act on actual true↔false transitions
+            .collectLatest { conditionsMet ->     // collectLatest cancels the delay if a new
+                if (conditionsMet) {              // emission arrives (e.g. phone moves away)
+                    delay(600)                    // hold-still grace period
+                    viewModel.onIntent(InvoiceCaptureIntent.AutoCaptureReady)
+                } else {
+                    viewModel.onIntent(InvoiceCaptureIntent.AutoCaptureCancelled)
+                }
+            }
     }
 
     // Priority order: physical safety > image quality > guidance
