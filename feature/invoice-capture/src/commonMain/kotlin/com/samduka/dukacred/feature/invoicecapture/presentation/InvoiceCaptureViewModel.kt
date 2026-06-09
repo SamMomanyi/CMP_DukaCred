@@ -47,7 +47,7 @@ class InvoiceCaptureViewModel : ViewModel() {
             }
             // Countdown complete — hand off to the camera
             _state.value = InvoiceCaptureState.Scanning
-            _effect.emit(InvoiceCaptureEffect.TriggerCapture)
+            _effect.trySend(InvoiceCaptureEffect.TriggerCapture)
         }
     }
 
