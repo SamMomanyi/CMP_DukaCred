@@ -16,8 +16,8 @@ class InvoiceCaptureViewModel : ViewModel() {
     private val _state = MutableStateFlow<InvoiceCaptureState>(InvoiceCaptureState.Idle)
     val state = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<InvoiceCaptureEffect>()
-    val effect = _effect.asSharedFlow()
+    private val _effect = Channel<InvoiceCaptureEffect>(Channel.BUFFERED)
+    val effect: receiveAsFlow = _effect.receiveAsFlow()
 
     private var countdownJob: Job? = null
 
