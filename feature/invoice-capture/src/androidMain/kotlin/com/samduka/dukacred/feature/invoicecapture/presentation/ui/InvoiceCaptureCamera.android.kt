@@ -221,12 +221,13 @@ actual class InvoiceCaptureCameraController(
             """(?:KSh|Ksh|KES|ksh|USD|EUR|\$|€|£)\s*[\d,]+|[\d,]+\s*(?:KSh|Ksh|KES|ksh)""",
             RegexOption.IGNORE_CASE,
         ).findAll(fullText).count()
+
         val keywordHits = keywords.count { fullText.contains(it) }
         // At least one currency/numeric pattern (handles "1,250.00", "500", "1.5K")
         val hasFigures = blocks.any { b ->
             b.text.contains(Regex("""[\d,]+\.?\d{0,2}"""))
         }
-        return keywordHits >= 2 && hasFigures
+        return currencyCount || keywordHits >= 2 && hasFigures
     }
 
     // ── Still capture ──────────────────────────────────────────────────────────
