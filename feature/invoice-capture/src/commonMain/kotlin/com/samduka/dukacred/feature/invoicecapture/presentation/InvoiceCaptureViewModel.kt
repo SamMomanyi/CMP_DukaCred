@@ -80,6 +80,6 @@ class InvoiceCaptureViewModel : ViewModel() {
     }
 
     private fun navigateToDashboard() {
-        viewModelScope.launch { _effect.emit(InvoiceCaptureEffect.NavigateToDashboard) }
+        viewModelScope.launch { _effect.trySend(InvoiceCaptureEffect.NavigateToDashboard) }
     }
 }
