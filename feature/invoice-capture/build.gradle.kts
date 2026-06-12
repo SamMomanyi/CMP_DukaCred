@@ -6,6 +6,19 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.dokka)
+}
+
+// 1. Add top-level dependencies for Dokka plugins
+dependencies {
+    dokkaPlugin(libs.dokka.android)
+}
+
+// 2. Add the Dokka configuration block
+dokka {
+    pluginsConfiguration.html {
+        footerMessage.set("© 2026 DukaCred")
+    }
 }
 
 kotlin {
@@ -46,8 +59,6 @@ kotlin {
             // Project Modules
             implementation(project(":core:common"))
             implementation(project(":core:designsystem"))
-
-
         }
 
         androidMain.dependencies {
