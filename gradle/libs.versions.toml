@@ -27,6 +27,7 @@ camerax = "1.3.3"
 mlkit-text = "19.0.0"
 guava = "33.2.1-android"
 ui = "1.11.2"
+dokka = "2.2.0"
 
 [libraries]
 # Ktor engines (Supabase SDK needs these under the hood)
@@ -87,10 +88,14 @@ guava = { module = "com.google.guava:guava", version.ref = "guava" }
 # ML Kit (Unbundled Play Services version)
 mlkit-text-recognition = { module = "com.google.android.gms:play-services-mlkit-text-recognition", version.ref = "mlkit-text" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
+# Optional: The Android documentation plugin we talked about
+dokka-android = { module = "org.jetbrains.dokka:android-documentation-plugin", version.ref = "dokka" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
+# The core Dokka plugin
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 #buildKonfig
 buildKonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildKonfig" }
 composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }
