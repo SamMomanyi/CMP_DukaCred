@@ -36,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,6 +52,8 @@ import com.samduka.dukacred.feature.invoicecapture.presentation.InvoiceCaptureSt
 import com.samduka.dukacred.feature.invoicecapture.presentation.InvoiceCaptureViewModel
 import com.samduka.dukacred.feature.invoicecapture.sensor.rememberIsShaking
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import org.koin.compose.viewmodel.koinViewModel
 
 
@@ -81,8 +84,8 @@ fun InvoiceCaptureScreen(
     // ── Auto-capture gate — all three conditions must be true ──────────────────
     val captureConditionsMet by remember {
         derivedStateOf {
-            cameraController.isCameraReady   &&
-                    cameraController.hasInvoiceText  &&
+            cameraController.isCameraReady &&
+                    cameraController.hasInvoiceText &&
                     cameraController.hasAdequateLight &&
                     !isShaking
         }
@@ -104,8 +107,9 @@ fun InvoiceCaptureScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                InvoiceCaptureEffect.TriggerCapture      -> cameraController.capture()
-                InvoiceCaptureEffect.NavigateToDashboard -> { /* hook your NavController here */ }
+                InvoiceCaptureEffect.TriggerCapture -> cameraController.capture()
+                InvoiceCaptureEffect.NavigateToDashboard -> { /* hook your NavController here */
+                }
             }
         }
     }
@@ -116,8 +120,8 @@ fun InvoiceCaptureScreen(
         snapshotFlow {
             // snapshotFlow observes every mutableStateOf read inside this lambda,
             // so any change to any of these four values re-evaluates the block
-            cameraController.isCameraReady    &&
-                    cameraController.hasInvoiceText   &&
+            cameraController.isCameraReady &&
+                    cameraController.hasInvoiceText &&
                     cameraController.hasAdequateLight &&
                     !isShaking
         }
@@ -134,11 +138,12 @@ fun InvoiceCaptureScreen(
 
     // Priority order: physical safety > image quality > guidance
     val displayWarning: CaptureWarning? = when {
-        isShaking                                                   -> CaptureWarning.Shaking
+        isShaking -> CaptureWarning.Shaking
         !cameraController.hasAdequateLight && cameraController.isCameraReady
             -> CaptureWarning.LowLight
-        showNoTextWarning                                           -> CaptureWarning.NoTextDetected
-        else                                                        -> null
+
+        showNoTextWarning -> CaptureWarning.NoTextDetected
+        else -> null
     }
 
     // ── Root ───────────────────────────────────────────────────────────────────
@@ -150,7 +155,7 @@ fun InvoiceCaptureScreen(
         // ── 1. Camera preview ──────────────────────────────────────────────────
         InvoiceCapturePreview(
             controller = cameraController,
-            modifier   = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             permissionDeniedContent = {
                 Box(
                     modifier = Modifier
@@ -159,7 +164,7 @@ fun InvoiceCaptureScreen(
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text  = "Camera permission required to capture invoices.",
+                        text = "Camera permission required to capture invoices.",
                         color = DukaCredColors.Cream100,
                     )
                 }
@@ -169,7 +174,7 @@ fun InvoiceCaptureScreen(
         // ── 2. Scanner overlay — turns green when invoice is detected ──────────
         val documentLocked = cameraController.hasInvoiceText && cameraController.hasAdequateLight
         ScannerOverlay(
-            modifier           = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             isDocumentDetected = documentLocked,
         )
 
@@ -184,24 +189,24 @@ fun InvoiceCaptureScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(
-                onClick  = onClose,
+                onClick = onClose,
                 modifier = Modifier
                     .clip(CircleShape)
                     .background(DukaCredColors.WhiteAlpha10),
             ) {
                 Icon(
-                    imageVector        = Icons.Rounded.Close,
+                    imageVector = Icons.Rounded.Close,
                     contentDescription = "Close camera",
-                    tint               = DukaCredColors.Cream100,
+                    tint = DukaCredColors.Cream100,
                 )
             }
         }
 
         // ── 4. Warning banner ──────────────────────────────────────────────────
         AnimatedVisibility(
-            visible  = displayWarning != null,
-            enter    = slideInVertically { -it } + fadeIn(),
-            exit     = slideOutVertically { -it } + fadeOut(),
+            visible = displayWarning != null,
+            enter = slideInVertically { -it } + fadeIn(),
+            exit = slideOutVertically { -it } + fadeOut(),
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .statusBarsPadding()
@@ -209,7 +214,7 @@ fun InvoiceCaptureScreen(
         ) {
             if (displayWarning != null) {
                 WarningBanner(
-                    warning  = displayWarning,
+                    warning = displayWarning,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
@@ -217,9 +222,9 @@ fun InvoiceCaptureScreen(
 
         // ── 5. Countdown overlay (slides over everything during AutoCapturing) ──
         AnimatedVisibility(
-            visible  = uiState is InvoiceCaptureState.AutoCapturing,
-            enter    = fadeIn(tween(200)),
-            exit     = fadeOut(tween(200)),
+            visible = uiState is InvoiceCaptureState.AutoCapturing,
+            enter = fadeIn(tween(200)),
+            exit = fadeOut(tween(200)),
             modifier = Modifier.fillMaxSize(),
         ) {
             val countdown = (uiState as? InvoiceCaptureState.AutoCapturing)?.countdown ?: 0
@@ -233,15 +238,15 @@ fun InvoiceCaptureScreen(
         // Allow manual shutter in Idle and AutoCapturing;
         // disable while the camera is mid-capture or the cloud is processing
         val canCapture = cameraController.isCameraReady &&
-                !cameraController.isCapturing         &&
+                !cameraController.isCapturing &&
                 !isScanning
 
         // Inner circle colour signals device state at a glance
         val innerColor by animateColorAsState(
             targetValue = when {
-                isShaking    -> DukaCredColors.Error
+                isShaking -> DukaCredColors.Error
                 documentLocked && !isCounting -> Color(0xFF4CAF50)  // green lock
-                else         -> DukaCredColors.Ochre400
+                else -> DukaCredColors.Ochre400
             },
             animationSpec = tween(300),
             label = "inner_circle_color",
@@ -256,22 +261,23 @@ fun InvoiceCaptureScreen(
             contentAlignment = Alignment.Center,
         ) {
             Surface(
-                onClick      = { viewModel.onIntent(InvoiceCaptureIntent.TakePictureClicked) },
-                enabled      = canCapture,
-                modifier     = Modifier.size(88.dp),
-                shape        = CircleShape,
-                color        = if (canCapture) DukaCredColors.Cream100 else DukaCredColors.Cream300,
+                onClick = { viewModel.onIntent(InvoiceCaptureIntent.TakePictureClicked) },
+                enabled = canCapture,
+                modifier = Modifier.size(88.dp),
+                shape = CircleShape,
+                color = if (canCapture) DukaCredColors.Cream100 else DukaCredColors.Cream300,
                 contentColor = DukaCredColors.ForestGreen900,
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     when {
                         cameraController.isCapturing || isScanning -> {
                             CircularProgressIndicator(
-                                modifier    = Modifier.size(32.dp),
-                                color       = DukaCredColors.ForestGreen900,
+                                modifier = Modifier.size(32.dp),
+                                color = DukaCredColors.ForestGreen900,
                                 strokeWidth = 3.dp,
                             )
                         }
+
                         else -> {
                             Box(
                                 modifier = Modifier
@@ -296,10 +302,10 @@ private fun CountdownOverlay(countdown: Int) {
     LaunchedEffect(countdown) { targetScale = 1f }
 
     val scale by animateFloatAsState(
-        targetValue   = targetScale,
+        targetValue = targetScale,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness    = Spring.StiffnessMediumLow,
+            stiffness = Spring.StiffnessMediumLow,
         ),
         label = "countdown_scale",
     )
@@ -321,9 +327,9 @@ private fun CountdownOverlay(countdown: Int) {
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text       = "$countdown",
-                color      = DukaCredColors.Cream100,
-                fontSize   = 56.sp,
+                text = "$countdown",
+                color = DukaCredColors.Cream100,
+                fontSize = 56.sp,
                 fontWeight = FontWeight.ExtraBold,
                 lineHeight = 56.sp,
             )
@@ -331,11 +337,11 @@ private fun CountdownOverlay(countdown: Int) {
 
         // Guidance label at the bottom
         Text(
-            text       = "Hold steady…",
-            color      = Color.White.copy(alpha = 0.80f),
-            fontSize   = 15.sp,
+            text = "Hold steady…",
+            color = Color.White.copy(alpha = 0.80f),
+            fontSize = 15.sp,
             fontWeight = FontWeight.Medium,
-            modifier   = Modifier
+            modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 160.dp),
         )

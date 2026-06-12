@@ -14,6 +14,10 @@ actual class InvoiceCaptureCameraController {
     actual val isCapturing: Boolean = false
 
     actual fun capture() = Unit
+    actual val hasInvoiceText: Boolean
+        get() = TODO("Not yet implemented")
+    actual val hasAdequateLight: Boolean
+        get() = TODO("Not yet implemented")
 }
 
 @Composable
