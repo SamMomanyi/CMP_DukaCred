@@ -68,70 +68,70 @@ fun InvoiceCaptureScreen(
     val isShaking by rememberIsShaking(thresholdG = 1.05f)
 
     // ── Camera controller ──────────────────────────────────────────────────────
+// ── Camera controller ──────────────────────────────────────────────────────
     val cameraController = rememberInvoiceCaptureCameraController(
         onCapture = { bytes ->
             if (bytes == null) {
                 viewModel.onIntent(InvoiceCaptureIntent.CaptureFailed)
                 return@rememberInvoiceCaptureCameraController
             }
-            // Brightness was validated in real-time via hasAdequateLight,
-            // so forward the bytes directly without a post-capture re-check
             viewModel.onIntent(InvoiceCaptureIntent.ImageCaptured(bytes))
             onImageCaptured(bytes)
         }
     )
 
-    // ── Auto-capture gate — all three conditions must be true ──────────────────
-    val captureConditionsMet by remember {
-        derivedStateOf {
-            cameraController.isCameraReady &&
-                    cameraController.hasInvoiceText &&
+// ── REMOVED: captureConditionsMet derivedStateOf (was duplicate trigger) ──
+// ── REMOVED: LaunchedEffect(captureConditionsMet) (was duplicate trigger) ──
+
+// ── Auto-capture trigger — single source of truth ─────────────────────────
+// snapshotFlow tracks every mutableStateOf read inside the lambda, so any
+// change to any of the four values re-evaluates it immediately.
+// collectLatest cancels the in-flight delay if conditions drop mid-hold.
+    LaunchedEffect(Unit) {
+        snapshotFlow {
+            cameraController.isCameraReady   &&
+                    cameraController.hasInvoiceText  &&
                     cameraController.hasAdequateLight &&
                     !isShaking
         }
+            .distinctUntilChanged()
+            .collectLatest { conditionsMet ->
+                if (conditionsMet) {
+                    delay(600)
+                    viewModel.onIntent(InvoiceCaptureIntent.AutoCaptureReady)
+                } else {
+                    viewModel.onIntent(InvoiceCaptureIntent.AutoCaptureCancelled)
+                }
+            }
     }
 
-    // Debounce: conditions must hold for 500 ms before we start the countdown.
-    // LaunchedEffect cancels automatically when captureConditionsMet flips,
-    // so rapid oscillations (common when panning the camera) never trigger a capture.
-    LaunchedEffect(captureConditionsMet) {
-        if (captureConditionsMet) {
-            delay(500)
-            if (captureConditionsMet) viewModel.onIntent(InvoiceCaptureIntent.AutoCaptureReady)
-        } else {
-            viewModel.onIntent(InvoiceCaptureIntent.AutoCaptureCancelled)
-        }
-    }
-
-    // ── Collect one-time effects ───────────────────────────────────────────────
+// ── Collect one-time effects ───────────────────────────────────────────────
+// collectLatest is already imported; avoids the missing 'collect' import error.
+// Safe here because the handler body (capture()) is non-suspending.
     LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
+        viewModel.effect.collectLatest { effect: InvoiceCaptureEffect ->
             when (effect) {
-                InvoiceCaptureEffect.TriggerCapture -> cameraController.capture()
-                InvoiceCaptureEffect.NavigateToDashboard -> { /* hook your NavController here */
+                InvoiceCaptureEffect.TriggerCapture ->
+                    cameraController.capture()
+
+                InvoiceCaptureEffect.NavigateToDashboard -> {
+                    // wire NavController here
                 }
             }
         }
     }
 
-    // ── Deferred "no text" warning — 2s grace period so it doesn't flash ───────
+// ── "No text" warning — dedicated observer, 2 s grace period ──────────────
     var showNoTextWarning by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
-        snapshotFlow {
-            // snapshotFlow observes every mutableStateOf read inside this lambda,
-            // so any change to any of these four values re-evaluates the block
-            cameraController.isCameraReady &&
-                    cameraController.hasInvoiceText &&
-                    cameraController.hasAdequateLight &&
-                    !isShaking
-        }
-            .distinctUntilChanged()               // only act on actual true↔false transitions
-            .collectLatest { conditionsMet ->     // collectLatest cancels the delay if a new
-                if (conditionsMet) {              // emission arrives (e.g. phone moves away)
-                    delay(600)                    // hold-still grace period
-                    viewModel.onIntent(InvoiceCaptureIntent.AutoCaptureReady)
+        snapshotFlow { cameraController.isCameraReady && !cameraController.hasInvoiceText }
+            .distinctUntilChanged()
+            .collectLatest { noText ->
+                if (noText) {
+                    delay(2_000)
+                    showNoTextWarning = true   // ← was never set before, now it is
                 } else {
-                    viewModel.onIntent(InvoiceCaptureIntent.AutoCaptureCancelled)
+                    showNoTextWarning = false
                 }
             }
     }
