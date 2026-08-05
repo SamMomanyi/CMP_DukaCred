@@ -203,6 +203,13 @@ fun InvoiceCaptureScreen(
         }
 
         // ── 4. Warning banner ──────────────────────────────────────────────────
+// Remember the last non-null warning so the exit animation has
+// content to animate away, instead of collapsing to empty instantly.
+        var lastWarning by remember { mutableStateOf(displayWarning) }
+        LaunchedEffect(displayWarning) {
+            if (displayWarning != null) lastWarning = displayWarning
+        }
+
         AnimatedVisibility(
             visible = displayWarning != null,
             enter = slideInVertically { -it } + fadeIn(),
@@ -212,11 +219,8 @@ fun InvoiceCaptureScreen(
                 .statusBarsPadding()
                 .padding(top = 72.dp, start = 20.dp, end = 20.dp),
         ) {
-            if (displayWarning != null) {
-                WarningBanner(
-                    warning = displayWarning,
-                    modifier = Modifier.fillMaxWidth(),
-                )
+            lastWarning?.let { warning ->
+                WarningBanner(warning = warning, modifier = Modifier.fillMaxWidth())
             }
         }
 

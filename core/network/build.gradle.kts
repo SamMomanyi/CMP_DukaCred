@@ -31,6 +31,11 @@ buildkonfig {
             "SUPABASE_ANON_KEY",
             localProperties.getProperty("SUPABASE_ANON_KEY") ?: "MISSING_KEY"
         )
+        buildConfigField(
+            STRING,
+            "GEMINI_API_KEY",
+            localProperties.getProperty("DUKACREDAI") ?: "MISSING_KEY"
+        )
     }
 }
 
