@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -19,7 +20,7 @@ class InvoiceCaptureViewModel : ViewModel() {
     val state = _state.asStateFlow()
 
     private val _effect = Channel<InvoiceCaptureEffect>(Channel.BUFFERED)
-    val effect: receiveAsFlow = _effect.receiveAsFlow()
+    val effect: Flow<InvoiceCaptureEffect> = _effect.receiveAsFlow()
 
     private var countdownJob: Job? = null
 

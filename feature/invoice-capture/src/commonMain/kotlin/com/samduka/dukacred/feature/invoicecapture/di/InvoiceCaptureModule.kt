@@ -8,7 +8,7 @@ import org.koin.dsl.module
 
 val invoiceCaptureModule = module {
     single { InvoiceImageCache() }
-    // Tells Koin how to create your ViewModel
+
     viewModel { InvoiceCaptureViewModel() }
 
 }
