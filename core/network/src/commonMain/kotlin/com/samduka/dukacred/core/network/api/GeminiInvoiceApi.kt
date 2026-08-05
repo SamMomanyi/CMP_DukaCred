@@ -1,7 +1,6 @@
 package com.samduka.dukacred.core.network.api
 
 import com.samduka.dukacred.core.network.BuildKonfig
-import com.samduka.dukacred.core.network.dto.CandidateContent
 import com.samduka.dukacred.core.network.dto.GenerationConfig
 import com.samduka.dukacred.core.network.dto.GeminiContent
 import com.samduka.dukacred.core.network.dto.GeminiPart
@@ -19,11 +18,12 @@ import kotlinx.serialization.json.Json
 
 class GeminiInvoiceApi(
     private val httpClient: HttpClient,
-    private val json: Json
+    private val json: Json,
 ) {
     suspend fun extractInvoiceDetails(base64Image: String): InvoiceExtractionResult {
         val apiKey = BuildKonfig.GEMINI_API_KEY
-        val url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$apiKey"
+        val url =
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$apiKey"
 
         val prompt = """
             Extract the details from this receipt or invoice image into a JSON object.
@@ -42,12 +42,15 @@ class GeminiInvoiceApi(
             contents = listOf(
                 GeminiContent(
                     parts = listOf(
-                        GeminiPart.TextPart(prompt),
-                        GeminiPart.InlineDataPart(InlineData(data = base64Image))
+                        // FIX: GeminiPart is now a flat data class, not a sealed
+                        // type — construct via named params instead of
+                        // GeminiPart.TextPart(...) / GeminiPart.InlineDataPart(...)
+                        GeminiPart(text = prompt),
+                        GeminiPart(inlineData = InlineData(data = base64Image)),
                     )
                 )
             ),
-            generationConfig = GenerationConfig(responseMimeType = "application/json")
+            generationConfig = GenerationConfig(responseMimeType = "application/json"),
         )
 
         val httpResponse = httpClient.post(url) {
@@ -56,7 +59,12 @@ class GeminiInvoiceApi(
         }
 
         val response: GeminiResponse = httpResponse.body()
-        val rawJsonText = response.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
+        val rawJsonText = response.candidates
+            ?.firstOrNull()
+            ?.content
+            ?.parts
+            ?.firstOrNull()
+            ?.text
             ?: throw IllegalStateException("Empty response from Gemini Vision API")
 
         return json.decodeFromString(rawJsonText)
