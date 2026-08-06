@@ -7,6 +7,11 @@ import kotlin.random.Random
  * image. `id` is null until the invoice has actually been persisted to
  * Supabase — a freshly-extracted, not-yet-confirmed invoice always has
  * id = null.
+ *
+ * NOTE: payment method / M-Pesa ref / Till number / ETR serial are
+ * deliberately not modeled yet — Gemini isn't asked to extract them, so
+ * fields for them here would just always be null. Add them alongside the
+ * prompt/DTO changes when you're ready to build that out.
  */
 data class ParsedInvoice(
     val id: String? = null,
@@ -17,10 +22,6 @@ data class ParsedInvoice(
     val currency: String = "KES",
     val taxAmount: Double? = null,
     val lineItems: List<InvoiceLineItem> = emptyList(),
-    val paymentMethod: PaymentMethod = PaymentMethod.UNKNOWN,
-    val mpesaTransactionRef: String? = null,
-    val tillNumber: String? = null,
-    val etrSerialNumber: String? = null,
     val isVerified: Boolean = false,
 )
 
@@ -34,7 +35,5 @@ data class InvoiceLineItem(
     val unitPrice: Double = 0.0,
     val totalPrice: Double = quantity * unitPrice,
 )
-
-enum class PaymentMethod { CASH, MPESA, CARD, BANK_TRANSFER, UNKNOWN }
 
 fun generateLocalId(): String = Random.nextLong().toString()
