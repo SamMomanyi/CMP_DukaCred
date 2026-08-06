@@ -5,13 +5,23 @@ import kotlinx.coroutines.flow.Flow
 
 /**
  * Single source of truth for invoice data.
- * Coordinates between the OCR service and local local database.
+ *
+ * Split into two steps rather than one `processAndSaveInvoice` call because
+ * the actual UX has a review step in between: extract → merchant edits the
+ * form → THEN save. Saving whatever Gemini produced without letting the
+ * merchant correct it first defeats the point of the verification screen.
  */
 interface InvoiceRepository {
 
-    // Sends the image to the AI, gets the data, and saves it locally
-    suspend fun processAndSaveInvoice(imageBytes: ByteArray): Result<ParsedInvoice>
+    /** AI extraction only — no persistence. Feeds the editable review form. */
+    suspend fun extractInvoice(imageBytes: ByteArray): Result<ParsedInvoice>
 
-    // Gets a stream of all saved invoices for the UI to display
+    /** Persists the merchant-verified invoice + uploads the raw receipt image. */
+    suspend fun confirmAndSaveInvoice(
+        invoice: ParsedInvoice,
+        rawImageBytes: ByteArray,
+    ): Result<ParsedInvoice>
+
+    /** Stream of all saved invoices for the dashboard/history UI. */
     fun getRecentInvoices(): Flow<List<ParsedInvoice>>
 }
