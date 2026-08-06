@@ -3,18 +3,22 @@ package com.samduka.dukacred.feature.invoicecapture.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.samduka.dukacred.feature.invoicecapture.domain.InvoiceImageCache
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-class InvoiceCaptureViewModel : ViewModel() {
+class InvoiceCaptureViewModel(
+    // FIX: was a no-arg constructor. Nothing ever wrote into the cache that
+    // InvoiceProcessingViewModel reads from — it would've started every scan
+    // with a null image. Injected here and written in handleImageCaptured.
+    private val imageCache: InvoiceImageCache,
+) : ViewModel() {
 
     private val _state = MutableStateFlow<InvoiceCaptureState>(InvoiceCaptureState.Idle)
     val state = _state.asStateFlow()
@@ -73,8 +77,13 @@ class InvoiceCaptureViewModel : ViewModel() {
     // ── Post-capture ───────────────────────────────────────────────────────────
     private fun handleImageCaptured(bytes: ByteArray) {
         countdownJob?.cancel()
+        // FIX: this is the actual fix — write the bytes into the shared cache
+        // synchronously, before the Screen's onImageCaptured(bytes) callback
+        // fires navigation to InvoiceProcessingScreen. By the time that
+        // screen composes, InvoiceProcessingViewModel.init{} reads a
+        // populated cache instead of null.
+        imageCache.capturedImageBytes = bytes
         _state.value = InvoiceCaptureState.Scanning
-        // TODO: viewModelScope.launch { repository.processAndSaveInvoice(bytes) }
     }
 
     private fun resetToIdle() {
