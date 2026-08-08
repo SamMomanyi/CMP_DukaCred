@@ -5,22 +5,16 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GeminiRequest(
-    @SerialName("contents") val contents: List<GeminiContent>,       // FIX: was `List` (no type arg)
+    @SerialName("contents") val contents: List<GeminiContent>,
     @SerialName("generationConfig") val generationConfig: GenerationConfig,
 )
 
 @Serializable
 data class GeminiContent(
-    @SerialName("parts") val parts: List<GeminiPart>,                // FIX: was `List`
+    @SerialName("parts") val parts: List<GeminiPart>,
 )
 
-// FIX: was `sealed interface GeminiPart` with `TextPart`/`InlineDataPart`
-// subtypes. Polymorphic serialization on a sealed type injects a "type"
-// discriminator into the JSON — e.g. {"type": "...TextPart", "text": "..."}.
-// Gemini's REST API has no idea what "type" means here; it expects a plain
-// part object with either a "text" key or an "inlineData" key, nothing
-// else. A flat class with two nullable fields produces exactly that shape —
-// whichever field is left null is simply omitted from the output.
+
 @Serializable
 data class GeminiPart(
     @SerialName("text") val text: String? = null,
@@ -42,7 +36,7 @@ data class GenerationConfig(
 
 @Serializable
 data class GeminiResponse(
-    @SerialName("candidates") val candidates: List<Candidate>? = null, // FIX: was `List?`
+    @SerialName("candidates") val candidates: List<Candidate>? = null,
 )
 
 @Serializable
@@ -52,7 +46,7 @@ data class Candidate(
 
 @Serializable
 data class CandidateContent(
-    @SerialName("parts") val parts: List<TextPartResponse>? = null,   // FIX: was `List?`
+    @SerialName("parts") val parts: List<TextPartResponse>? = null,
 )
 
 @Serializable

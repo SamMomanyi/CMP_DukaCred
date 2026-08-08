@@ -11,7 +11,7 @@ data class InvoiceExtractionResult(
     @SerialName("currency") val currency: String? = "KES",
     @SerialName("invoice_date") val invoiceDate: String? = null,
     @SerialName("invoice_number") val invoiceNumber: String? = null,
-    @SerialName("line_items") val lineItems: List<LineItem> = emptyList(), // FIX: was `List` (no type arg)
+    @SerialName("line_items") val lineItems: List<LineItem> = emptyList(),
 )
 
 @Serializable

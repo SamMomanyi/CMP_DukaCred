@@ -3,7 +3,7 @@ package com.samduka.dukacred.core.network
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-// Matches the exact JSON Supabase returns on sign in / sign up
+
 @Serializable
 data class AuthResponse(
     @SerialName("access_token")  val accessToken: String,
