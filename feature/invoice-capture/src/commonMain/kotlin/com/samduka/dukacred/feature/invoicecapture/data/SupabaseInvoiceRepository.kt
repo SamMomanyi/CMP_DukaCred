@@ -5,9 +5,7 @@ import com.samduka.dukacred.feature.invoicecapture.domain.InvoiceOcrService
 import com.samduka.dukacred.feature.invoicecapture.domain.ParsedInvoice
 import com.samduka.dukacred.feature.invoicecapture.domain.repository.InvoiceRepository
 import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
-import io.github.jan.supabase.storage.from
 import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

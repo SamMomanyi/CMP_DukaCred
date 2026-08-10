@@ -43,7 +43,9 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(libs.kotlinx.coroutines.core)
-
+            implementation(libs.supabase.storage)
+            implementation(libs.supabase.postgrest)
+            implementation(libs.supabase.functions)
             // Compose
             implementation(compose.runtime)
             implementation(compose.foundation)
