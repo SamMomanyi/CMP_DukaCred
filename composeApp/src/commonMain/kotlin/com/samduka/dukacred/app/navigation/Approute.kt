@@ -34,7 +34,7 @@ sealed class AppRoute {
     @Serializable
     data object InvoiceCapture : AppRoute()
 
-    r
+
     @Serializable
     data object InvoiceProcessing : AppRoute()
 
