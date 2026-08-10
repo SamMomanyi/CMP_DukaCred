@@ -71,18 +71,32 @@ class InvoiceProcessingViewModel(
             )
             return
         }
+
         viewModelScope.launch {
             _state.value = InvoiceProcessingState.ExtractingAI
-            repository.extractInvoice(bytes)
-                .onSuccess { invoice ->
-                    _state.value = InvoiceProcessingState.Success(
-                        invoice = invoice,
-                        validation = InvoiceValidator.validate(invoice.totalAmount, invoice.lineItems),
-                    )
-                }
-                .onFailure { throwable ->
-                    _state.value = InvoiceProcessingState.Error(throwable)
-                }
+
+            try {
+                // We wrap this in a strict try/catch to prevent silent coroutine crashes
+                repository.extractInvoice(bytes)
+                    .onSuccess { invoice ->
+                        _state.value = InvoiceProcessingState.Success(
+                            invoice = invoice,
+                            validation = InvoiceValidator.validate(invoice.totalAmount, invoice.lineItems),
+                        )
+                    }
+                    .onFailure { throwable ->
+                        throwable.printStackTrace() // Print exact error to Android Studio Logcat
+                        _state.value = InvoiceProcessingState.Error(
+                            Exception("Extraction failed: ${throwable.message}")
+                        )
+                    }
+            } catch (e: Exception) {
+                // If the repository or Ktor crashes entirely, catch it here!
+                e.printStackTrace()
+                _state.value = InvoiceProcessingState.Error(
+                    Exception("Fatal error during extraction: ${e.message}")
+                )
+            }
         }
     }
 
