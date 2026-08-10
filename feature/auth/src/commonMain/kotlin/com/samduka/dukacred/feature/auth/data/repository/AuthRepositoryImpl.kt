@@ -1,6 +1,5 @@
 package com.samduka.dukacred.feature.auth.data.repository
 
-import com.samduka.dukacred.core.common.error.AppError
 import com.samduka.dukacred.core.common.error.AuthError
 import com.samduka.dukacred.core.common.result.AppResult
 import com.samduka.dukacred.core.domain.model.UserRole
@@ -9,7 +8,6 @@ import com.samduka.dukacred.feature.auth.domain.repository.AuthRepository
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
-import io.github.jan.supabase.auth.providers.builtin.Phone
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
