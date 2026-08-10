@@ -91,6 +91,7 @@ private data class InvoiceLineItemRow(
 )
 
 private fun ParsedInvoice.toRow(imagePath: String?): InvoiceRow = InvoiceRow(
+    id = id?.takeIf { it.isNotBlank() },
     merchantName = merchantName,
     invoiceDate = invoiceDate,
     invoiceNumber = invoiceNumber,
