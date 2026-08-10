@@ -6,6 +6,9 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import java.io.ByteArrayOutputStream
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -200,12 +203,27 @@ actual class InvoiceCaptureCameraController(
         cap.takePicture(mainExecutor, object : ImageCapture.OnImageCapturedCallback() {
             override fun onCaptureSuccess(image: ImageProxy) {
                 val buf = image.planes[0].buffer
-                val bytes = ByteArray(buf.remaining()).also { buf.get(it) }
+                val originalBytes = ByteArray(buf.remaining()).also { buf.get(it) }
                 image.close()
+
+                // --- COMPRESSION PATCH START ---
+                // Decode the massive raw byte array into a Bitmap
+                val bitmap = BitmapFactory.decodeByteArray(originalBytes, 0, originalBytes.size)
+                val outputStream = ByteArrayOutputStream()
+
+                // Compress it heavily. 50% quality is visually identical for OCR
+                // but drops the file size from ~4MB down to ~400KB - 800KB.
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
+                val compressedBytes = outputStream.toByteArray()
+                // --- COMPRESSION PATCH END ---
+
                 capturingAtomic.set(false)
                 _isCapturing = false
-                onCapture(bytes)
+
+                // Pass the lightweight bytes to your ViewModel!
+                onCapture(compressedBytes)
             }
+
             override fun onError(e: ImageCaptureException) {
                 capturingAtomic.set(false)
                 _isCapturing = false

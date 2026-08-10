@@ -1,3 +1,5 @@
+package com.samduka.dukacred.app.navigation
+
 import kotlinx.serialization.Serializable
 
 sealed class AppRoute {

@@ -1,6 +1,5 @@
 package com.samduka.dukacred.app.navigation
 
-import AppRoute
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
