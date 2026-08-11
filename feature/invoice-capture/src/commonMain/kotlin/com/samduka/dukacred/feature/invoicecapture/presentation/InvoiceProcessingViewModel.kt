@@ -128,8 +128,7 @@ class InvoiceProcessingViewModel(
                     _effect.send(InvoiceProcessingEffect.NavigateToDashboard)
                 }
                 .onFailure { throwable ->
-                    // Keep the merchant's edits on screen — a failed save
-                    // should never wipe out work they've already done.
+
                     _state.value = current.copy(isSaving = false)
                     _effect.send(
                         InvoiceProcessingEffect.ShowError(
