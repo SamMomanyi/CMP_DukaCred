@@ -9,6 +9,7 @@ import android.os.Looper
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import java.io.ByteArrayOutputStream
+import java.io.File
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -200,31 +201,40 @@ actual class InvoiceCaptureCameraController(
         if (!capturingAtomic.compareAndSet(false, true)) return
         _isCapturing = true
 
-        cap.takePicture(mainExecutor, object : ImageCapture.OnImageCapturedCallback() {
-            override fun onCaptureSuccess(image: ImageProxy) {
-                val buf = image.planes[0].buffer
-                val originalBytes = ByteArray(buf.remaining()).also { buf.get(it) }
-                image.close()
+        // OnImageCapturedCallback exposes an ImageProxy in YUV_420_888 format;
+        // its first plane is not a JPEG and cannot be decoded with BitmapFactory.
+        // Ask CameraX to encode the capture as JPEG instead.
+        val outputFile = File.createTempFile("invoice_capture_", ".jpg", context.cacheDir)
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(outputFile).build()
 
-                // --- COMPRESSION PATCH START ---
-                // Decode the massive raw byte array into a Bitmap
-                val bitmap = BitmapFactory.decodeByteArray(originalBytes, 0, originalBytes.size)
-                val outputStream = ByteArrayOutputStream()
-
-                // Compress it heavily. 50% quality is visually identical for OCR
-                // but drops the file size from ~4MB down to ~400KB - 800KB.
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
-                val compressedBytes = outputStream.toByteArray()
-                // --- COMPRESSION PATCH END ---
-
-                capturingAtomic.set(false)
-                _isCapturing = false
-
-                // Pass the lightweight bytes to your ViewModel!
-                onCapture(compressedBytes)
+        cap.takePicture(outputOptions, mainExecutor, object : ImageCapture.OnImageSavedCallback {
+            override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                try {
+                    val originalBytes = outputFile.readBytes()
+                    val bitmap = BitmapFactory.decodeByteArray(originalBytes, 0, originalBytes.size)
+                    val capturedBytes = if (bitmap != null) {
+                        ByteArrayOutputStream().use { outputStream ->
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
+                            outputStream.toByteArray()
+                        }
+                    } else {
+                        // Keep the valid CameraX JPEG if decoding/compression is unavailable.
+                        originalBytes
+                    }
+                    onCapture(capturedBytes.takeUnless { it.isEmpty() })
+                } catch (e: Exception) {
+                    android.util.Log.e(TAG, "Failed to process captured invoice", e)
+                    onCapture(null)
+                } finally {
+                    outputFile.delete()
+                    capturingAtomic.set(false)
+                    _isCapturing = false
+                }
             }
 
             override fun onError(e: ImageCaptureException) {
+                android.util.Log.e(TAG, "Invoice image capture failed", e)
+                outputFile.delete()
                 capturingAtomic.set(false)
                 _isCapturing = false
                 onCapture(null)
