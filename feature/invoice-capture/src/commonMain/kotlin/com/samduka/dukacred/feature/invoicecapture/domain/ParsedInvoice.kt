@@ -22,7 +22,9 @@ data class ParsedInvoice(
     val currency: String = "KES",
     val taxAmount: Double? = null,
     val lineItems: List<InvoiceLineItem> = emptyList(),
+    val imagePath: String? = null,
     val isVerified: Boolean = false,
+    val supplierTillNumber: String? = null,
 )
 
 data class InvoiceLineItem(

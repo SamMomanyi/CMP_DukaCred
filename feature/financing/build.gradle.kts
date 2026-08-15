@@ -18,7 +18,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "CoreDomain"
+            baseName = "FeatureFinancing"
             isStatic = true
         }
     }
@@ -30,16 +30,27 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.supabase.auth)
+            implementation(libs.supabase.postgrest)
+            implementation(libs.koin.core)
+
             implementation(project(":core:common"))
+            implementation(project(":feature:invoice-capture"))
         }
 
-        val iosMain by creating
-        val jvmMain by getting
+        androidMain.dependencies {
+        }
+
+        iosMain.dependencies {
+        }
+
+        jvmMain.dependencies {
+        }
     }
 }
 
 android {
-    namespace = "com.samduka.dukacred.core.domain"
+    namespace = "com.samduka.dukacred.feature.financing"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {

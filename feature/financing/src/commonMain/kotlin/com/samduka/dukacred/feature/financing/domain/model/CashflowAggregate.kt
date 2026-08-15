@@ -1,4 +1,4 @@
-package com.samduka.dukacred.core.domain.model
+package com.samduka.dukacred.feature.financing.domain.model
 
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable

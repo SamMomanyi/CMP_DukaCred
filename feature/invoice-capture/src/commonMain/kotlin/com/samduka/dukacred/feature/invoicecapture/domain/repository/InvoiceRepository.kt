@@ -16,12 +16,22 @@ interface InvoiceRepository {
     /** AI extraction only — no persistence. Feeds the editable review form. */
     suspend fun extractInvoice(imageBytes: ByteArray): Result<ParsedInvoice>
 
-    /** Persists the merchant-verified invoice + uploads the raw receipt image. */
+    /** Persists a merchant-verified invoice row and its line items. */
+    suspend fun saveInvoice(invoice: ParsedInvoice): Result<ParsedInvoice>
+
+    /** Stream of saved invoices for history/dashboard surfaces. */
+    fun getInvoiceHistory(): Flow<List<ParsedInvoice>>
+
+    /** Uploads a private receipt image and returns its storage object path. */
+    suspend fun uploadInvoiceImage(bytes: ByteArray): Result<String>
+
     suspend fun confirmAndSaveInvoice(
         invoice: ParsedInvoice,
         rawImageBytes: ByteArray,
-    ): Result<ParsedInvoice>
+    ): Result<ParsedInvoice> = runCatching {
+        val imagePath = uploadInvoiceImage(rawImageBytes).getOrThrow()
+        saveInvoice(invoice.copy(imagePath = imagePath)).getOrThrow()
+    }
 
-    /** Stream of all saved invoices for the dashboard/history UI. */
-    fun getRecentInvoices(): Flow<List<ParsedInvoice>>
+    fun getRecentInvoices(): Flow<List<ParsedInvoice>> = getInvoiceHistory()
 }

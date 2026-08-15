@@ -9,6 +9,9 @@ class SaveInvoiceDraftUseCase(
 ) {
     suspend operator fun invoke(draft: InvoiceDraft, compressedImage: ByteArray): Result<InvoiceDraft> {
         if (compressedImage.isEmpty()) return Result.failure(IllegalArgumentException("Compressed image is empty"))
-        return runCatching { invoiceRepository.confirmAndSaveInvoice(draft, compressedImage).getOrThrow() }
+        return runCatching {
+            val imagePath = invoiceRepository.uploadInvoiceImage(compressedImage).getOrThrow()
+            invoiceRepository.saveInvoice(draft.copy(imagePath = imagePath)).getOrThrow()
+        }
     }
 }

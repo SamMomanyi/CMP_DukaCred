@@ -44,6 +44,7 @@ kotlin {
             implementation(project(":core:designsystem"))
             implementation(project(":feature:merchant-home"))
             implementation(project(":feature:invoice-capture"))
+            implementation(project(":feature:financing"))
 
             implementation(projects.core.common)
             implementation(libs.compose.runtime)

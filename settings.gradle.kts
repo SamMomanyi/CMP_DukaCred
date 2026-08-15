@@ -39,10 +39,10 @@ include(":composeApp")
 //The core bucket
 include(":core:common")
 include(":core:network")
-include(":core:domain")
 include(":core:designsystem")
 
 // The feature bucket
 include(":feature:auth")
 include(":feature:merchant-home")
 include(":feature:invoice-capture")
+include(":feature:financing")
