@@ -3,6 +3,7 @@ package com.samduka.dukacred.app.navigation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -13,7 +14,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.samduka.dukacred.app.presentation.AnimatedSplashScreen
 import com.samduka.dukacred.app.presentation.DashboardShellScreen
-import com.samduka.dukacred.core.designsystem.DukaCredColors
 import com.samduka.dukacred.feature.auth.presentation.ui.AdminSignInScreen
 import com.samduka.dukacred.feature.auth.presentation.ui.MerchantSignInScreen
 import com.samduka.dukacred.feature.auth.presentation.ui.RolePickerScreen
@@ -164,12 +164,12 @@ private fun StubScreen(label: String) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(DukaCredColors.ForestGreen900),
+            .background(MaterialTheme.colorScheme.primaryContainer),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = label,
-            color = DukaCredColors.Cream100
+            color = MaterialTheme.colorScheme.onPrimary
         )
     }
 }

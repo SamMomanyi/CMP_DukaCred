@@ -26,9 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.samduka.dukacred.core.designsystem.generated.resources.Res
 import com.samduka.dukacred.core.designsystem.generated.resources.*
-import com.samduka.dukacred.core.designsystem.DukaCredColors
-import com.samduka.dukacred.core.designsystem.DukaCredFonts
-import com.samduka.dukacred.core.designsystem.component.DukaCredPrimaryButton
+import com.samduka.dukacred.core.designsystem.theme.DukaCredFonts
+import com.samduka.dukacred.core.designsystem.theme.dukaColors
+import com.samduka.dukacred.core.designsystem.components.DukaPrimaryButton
 import com.samduka.dukacred.feature.merchanthome.presentation.state.MerchantHomeState
 import com.samduka.dukacred.feature.merchanthome.presentation.state.ObligationUiModel
 import org.jetbrains.compose.resources.stringResource
@@ -52,7 +52,7 @@ fun MerchantHomeScreen(
     onRefresh: () -> Unit = { println("TODO: Refreshing data") },
 ) {
     Scaffold(
-        containerColor = DukaCredColors.ForestGreen900,
+        containerColor = MaterialTheme.colorScheme.primaryContainer,
     ) { innerPadding ->
         PullToRefreshBox(
             modifier = Modifier
@@ -128,20 +128,20 @@ private fun DashboardHeader(
                 Text(
                     text = stringResource(Res.string.home_greeting_morning),
                     fontSize = 14.sp,
-                    color = DukaCredColors.Cream300
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     text = merchantName,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
-                    color = DukaCredColors.Cream100,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = stringResource(Res.string.home_subtitle),
                     fontSize = 12.sp,
-                    color = DukaCredColors.Cream300
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
@@ -150,12 +150,12 @@ private fun DashboardHeader(
                 modifier = Modifier
                     .size(44.dp)
                     .clip(CircleShape)
-                    .background(DukaCredColors.ForestGreen800)
+                    .background(MaterialTheme.colorScheme.surfaceContainerHigh)
             ) {
                 Icon(
                     Icons.Filled.Notifications,
                     contentDescription = stringResource(Res.string.home_notifications),
-                    tint = DukaCredColors.Ochre400
+                    tint = MaterialTheme.colorScheme.tertiary
                 )
             }
         }
@@ -190,24 +190,24 @@ private fun CreditHeroCard(
                 .background(
                     Brush.linearGradient(
                         listOf(
-                            DukaCredColors.ForestGreen600,
-                            DukaCredColors.ForestGreen700
+                            MaterialTheme.colorScheme.outline,
+                            MaterialTheme.colorScheme.surfaceVariant
                         )
                     )
                 )
                 .padding(24.dp)
         ) {
 
-            Text(stringResource(Res.string.home_credit_title), color = DukaCredColors.Cream300)
+            Text(stringResource(Res.string.home_credit_title), color = MaterialTheme.colorScheme.onSurfaceVariant)
 
             Text(
                 formatMoney(state.availableCredit.amountCents),
                 fontSize = 34.sp,
                 fontWeight = FontWeight.Bold,
-                color = DukaCredColors.Cream100
+                color = MaterialTheme.colorScheme.onPrimary
             )
 
-            Text(status, color = DukaCredColors.Ochre400, fontSize = 12.sp)
+            Text(status, color = MaterialTheme.colorScheme.tertiary, fontSize = 12.sp)
 
             Spacer(Modifier.height(8.dp))
 
@@ -223,7 +223,7 @@ private fun CreditHeroCard(
             if (next != null && next.nextPaymentAmount != null) {
                 Spacer(Modifier.height(16.dp))
 
-                Text(stringResource(Res.string.home_suggested_action), color = DukaCredColors.Cream300)
+                Text(stringResource(Res.string.home_suggested_action), color = MaterialTheme.colorScheme.onSurfaceVariant)
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -232,7 +232,7 @@ private fun CreditHeroCard(
                     Text(
                         "Pay ${formatMoney(next.nextPaymentAmount.amountCents)}",
                         fontWeight = FontWeight.Bold,
-                        color = DukaCredColors.Cream100
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
 
                     TextButton(onClick = {}) {
@@ -253,7 +253,7 @@ private fun QuickActions(
 ) {
     Column(modifier = modifier) {
 
-        DukaCredPrimaryButton(
+        DukaPrimaryButton(
             text = stringResource(Res.string.home_action_capture),
             onClick = onCaptureInvoice
         )
@@ -287,10 +287,10 @@ private fun ObligationsHeader(count: Int, modifier: Modifier = Modifier) {
         Text(
             stringResource(Res.string.home_obligations_title),
             fontWeight = FontWeight.Bold,
-            color = DukaCredColors.Cream100
+            color = MaterialTheme.colorScheme.onPrimary
         )
 
-        Text("$count", color = DukaCredColors.Ochre400)
+        Text("$count", color = MaterialTheme.colorScheme.tertiary)
     }
 }
 
@@ -298,14 +298,14 @@ private fun ObligationsHeader(count: Int, modifier: Modifier = Modifier) {
 @Composable
 private fun ObligationCard(obligation: ObligationUiModel, modifier: Modifier = Modifier) {
     val statusBackground = when {
-        obligation.isUrgent   -> DukaCredColors.Error.copy(alpha = 0.15f)
-        obligation.isPositive -> DukaCredColors.Success.copy(alpha = 0.12f)
-        else                  -> DukaCredColors.ForestGreen700.copy(alpha = 0.4f)
+        obligation.isUrgent   -> MaterialTheme.colorScheme.error.copy(alpha = 0.15f)
+        obligation.isPositive -> MaterialTheme.dukaColors.successOn.copy(alpha = 0.12f)
+        else                  -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
     }
     val statusContent = when {
-        obligation.isUrgent   -> DukaCredColors.Error
-        obligation.isPositive -> DukaCredColors.Success
-        else                  -> DukaCredColors.Ochre400
+        obligation.isUrgent   -> MaterialTheme.colorScheme.error
+        obligation.isPositive -> MaterialTheme.dukaColors.successOn
+        else                  -> MaterialTheme.colorScheme.tertiary
     }
 
     Card(
@@ -314,7 +314,7 @@ private fun ObligationCard(obligation: ObligationUiModel, modifier: Modifier = M
     ) {
         Column(
             Modifier
-                .background(DukaCredColors.ForestGreen800)
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
@@ -327,7 +327,7 @@ private fun ObligationCard(obligation: ObligationUiModel, modifier: Modifier = M
                     obligation.invoiceReference,
                     fontFamily = DukaCredFonts.soraFamily(),
                     fontWeight = FontWeight.Bold,
-                    color = DukaCredColors.Cream100
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
                 StatusChip(
                     label = obligation.statusLabel,
@@ -345,14 +345,14 @@ private fun ObligationCard(obligation: ObligationUiModel, modifier: Modifier = M
                     AmountColumn(
                         label = stringResource(Res.string.home_obligation_outstanding),
                         value = formatMoney(it.amountCents),
-                        valueColor = if (obligation.isUrgent) DukaCredColors.Error else DukaCredColors.Cream200
+                        valueColor = if (obligation.isUrgent) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
                     )
                 }
                 obligation.nextPaymentDueDate?.let {
                     AmountColumn(
                         label = stringResource(Res.string.home_obligation_due_date),
                         value = it,
-                        valueColor = if (obligation.isUrgent) DukaCredColors.Error else DukaCredColors.Cream300
+                        valueColor = if (obligation.isUrgent) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -385,9 +385,9 @@ private fun StatusChip(label: String, backgroundColor: Color, contentColor: Colo
 }
 
 @Composable
-private fun AmountColumn(label: String, value: String, valueColor: Color = DukaCredColors.Cream200) {
+private fun AmountColumn(label: String, value: String, valueColor: Color = MaterialTheme.colorScheme.onSurface) {
     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        Text(text = label, fontFamily = DukaCredFonts.dmSansFamily(), fontSize = 11.sp, color = DukaCredColors.Cream300)
+        Text(text = label, fontFamily = DukaCredFonts.dmSansFamily(), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Text(text = value, fontFamily = DukaCredFonts.soraFamily(), fontWeight = FontWeight.SemiBold, fontSize = 13.sp, color = valueColor)
     }
 }
@@ -397,7 +397,7 @@ private fun EmptyObligations() {
     Box(modifier = Modifier.fillMaxWidth().padding(40.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(text = "📋", fontSize = 40.sp)
-            Text(text = "No active obligations", fontFamily = DukaCredFonts.soraFamily(), fontWeight = FontWeight.SemiBold, fontSize = 16.sp, color = DukaCredColors.Cream200)
+            Text(text = "No active obligations", fontFamily = DukaCredFonts.soraFamily(), fontWeight = FontWeight.SemiBold, fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface)
         }
     }
 }

@@ -37,9 +37,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.samduka.dukacred.core.designsystem.DukaCredColors
-import com.samduka.dukacred.core.designsystem.component.DukaCredPrimaryButton
-import com.samduka.dukacred.core.designsystem.component.DukaCredTextField
+import com.samduka.dukacred.core.designsystem.components.DukaPrimaryButton
+import com.samduka.dukacred.core.designsystem.components.DukaInputField
 import com.samduka.dukacred.core.designsystem.generated.resources.Res
 import com.samduka.dukacred.core.designsystem.generated.resources.admin_signin_back
 import com.samduka.dukacred.core.designsystem.generated.resources.admin_signin_cta
@@ -87,8 +86,8 @@ fun AdminSignInScreen(
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
-                        DukaCredColors.ForestGreen900,
-                        DukaCredColors.Charcoal800,
+                        MaterialTheme.colorScheme.primaryContainer,
+                        MaterialTheme.colorScheme.surfaceContainerHigh,
                     )
                 )
             )
@@ -102,7 +101,7 @@ fun AdminSignInScreen(
                 .background(
                     Brush.radialGradient(
                         colors = listOf(
-                            DukaCredColors.ForestGreen400.copy(alpha = 0.15f),
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
                             Color.Transparent,
                         )
                     )
@@ -123,7 +122,7 @@ fun AdminSignInScreen(
                 Icon(
                     imageVector        = Icons.AutoMirrored.Rounded.ArrowBack,
                     contentDescription = stringResource(Res.string.admin_signin_back),
-                    tint               = DukaCredColors.Cream200,
+                    tint               = MaterialTheme.colorScheme.onSurface,
                 )
             }
 
@@ -133,7 +132,7 @@ fun AdminSignInScreen(
 
                 RoleBadge(
                     text  = stringResource(Res.string.role_admin_title),
-                    color = DukaCredColors.ForestGreen400,
+                    color = MaterialTheme.colorScheme.primary,
                 )
 
                 Spacer(Modifier.height(16.dp))
@@ -143,7 +142,7 @@ fun AdminSignInScreen(
                     style = MaterialTheme.typography.headlineLarge.copy(
                         letterSpacing = (-0.5).sp,
                     ),
-                    color = DukaCredColors.Cream100,
+                    color = MaterialTheme.colorScheme.onPrimary,
                 )
 
                 Spacer(Modifier.height(8.dp))
@@ -151,19 +150,20 @@ fun AdminSignInScreen(
                 Text(
                     text  = stringResource(Res.string.admin_signin_subheading),
                     style = MaterialTheme.typography.bodyLarge,
-                    color = DukaCredColors.Cream300,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
 
                 Spacer(Modifier.height(48.dp))
 
-                DukaCredTextField(
+                DukaInputField(
                     value         = state.email,
                     onValueChange = {
                         viewModel.onAction(AdminSignInAction.EmailChanged(it))
                     },
                     label         = stringResource(Res.string.admin_signin_email_label),
                     placeholder   = stringResource(Res.string.admin_signin_email_placeholder),
-                    errorMessage  = state.emailError,
+                    isError = state.emailError != null,
+                    errorText = state.emailError,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
                     ),
@@ -171,18 +171,16 @@ fun AdminSignInScreen(
 
                 Spacer(Modifier.height(20.dp))
 
-                DukaCredTextField(
+                DukaInputField(
                     value         = state.password,
                     onValueChange = {
                         viewModel.onAction(AdminSignInAction.PasswordChanged(it))
                     },
                     label                = stringResource(Res.string.admin_signin_password_label),
                     placeholder          = stringResource(Res.string.admin_signin_password_placeholder),
-                    errorMessage         = state.passwordError,
-                    visualTransformation = if (state.isPasswordVisible)
-                        VisualTransformation.None
-                    else
-                        PasswordVisualTransformation(),
+                    isError = state.passwordError != null,
+                    errorText = state.passwordError,
+                    isPassword = true,
                     keyboardOptions      = KeyboardOptions(
                         keyboardType = KeyboardType.Password,
                     ),
@@ -203,7 +201,7 @@ fun AdminSignInScreen(
                                     else
                                         Res.string.admin_signin_show_password
                                 ),
-                                tint = DukaCredColors.Cream300,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                     },
@@ -226,20 +224,20 @@ fun AdminSignInScreen(
                         Text(
                             text  = stringResource(Res.string.admin_signin_forgot_password),
                             style = MaterialTheme.typography.labelLarge,
-                            color = DukaCredColors.ForestGreen400,
+                            color = MaterialTheme.colorScheme.primary,
                         )
                     }
                 }
 
                 Spacer(Modifier.height(24.dp))
 
-                DukaCredPrimaryButton(
+                DukaPrimaryButton(
                     text      = if (state.isLoading)
                         stringResource(Res.string.admin_signin_loading)
                     else
                         stringResource(Res.string.admin_signin_cta),
                     onClick   = { viewModel.onAction(AdminSignInAction.SignInClicked) },
-                    isLoading = state.isLoading,
+                    loading = state.isLoading,
                 )
 
                 Spacer(Modifier.height(40.dp))
@@ -256,13 +254,13 @@ fun AdminSignInScreen(
                 Text(
                     text  = "New to DukaCred?",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = DukaCredColors.Cream300,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 TextButton(onClick = { viewModel.onAction(AdminSignInAction.SignUpClicked) }) {
                     Text(
                         text  = "Create Account",
                         style = MaterialTheme.typography.labelLarge,
-                        color = DukaCredColors.ForestGreen400,
+                        color = MaterialTheme.colorScheme.primary,
                     )
                 }
             }

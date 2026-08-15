@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountBalance
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,8 +24,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.samduka.dukacred.core.designsystem.DukaCredColors
-import com.samduka.dukacred.core.designsystem.DukaCredFonts
+import com.samduka.dukacred.core.designsystem.theme.DukaCredFonts
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -61,7 +61,7 @@ fun AnimatedSplashScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(DukaCredColors.ForestGreen900)
+            .background(MaterialTheme.colorScheme.primaryContainer)
             .alpha(alpha.value)
             .scale(scale.value),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -70,13 +70,13 @@ fun AnimatedSplashScreen(
         Icon(
             imageVector = Icons.Rounded.AccountBalance,
             contentDescription = "DukaCred logo",
-            tint = DukaCredColors.Ochre500,
+            tint = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier.scale(1.1f),
         )
         Spacer(modifier = Modifier.height(18.dp))
         Text(
             text = "DukaCred",
-            color = DukaCredColors.Cream100,
+            color = MaterialTheme.colorScheme.onPrimary,
             fontFamily = DukaCredFonts.soraFamily(),
             fontWeight = FontWeight.Bold,
             fontSize = 32.sp,

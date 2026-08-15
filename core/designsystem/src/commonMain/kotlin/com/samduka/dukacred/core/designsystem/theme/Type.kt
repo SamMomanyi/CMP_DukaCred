@@ -7,7 +7,6 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.samduka.dukacred.core.designsystem.DukaCredFonts
 
 /** Opt-in tabular-figure feature so digits in ledgers/balances align vertically. */
 fun TextStyle.asTabularNums(): TextStyle = copy(

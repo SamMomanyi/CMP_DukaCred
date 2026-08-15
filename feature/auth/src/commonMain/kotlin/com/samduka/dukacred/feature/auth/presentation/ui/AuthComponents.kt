@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.samduka.dukacred.core.designsystem.DukaCredColors
 
 @Composable
 internal fun RoleBadge(
@@ -53,12 +52,12 @@ internal fun ErrorBanner(message: String) {
         modifier = Modifier
             .fillMaxWidth()
             .background(
-                color = DukaCredColors.Error.copy(alpha = 0.1f),
+                color = MaterialTheme.colorScheme.error.copy(alpha = 0.1f),
                 shape = RoundedCornerShape(12.dp),
             )
             .border(
                 width = 1.dp,
-                color = DukaCredColors.Error.copy(alpha = 0.3f),
+                color = MaterialTheme.colorScheme.error.copy(alpha = 0.3f),
                 shape = RoundedCornerShape(12.dp),
             )
             .padding(horizontal = 16.dp, vertical = 12.dp),
@@ -67,14 +66,14 @@ internal fun ErrorBanner(message: String) {
         Icon(
             imageVector        = Icons.Rounded.ErrorOutline,
             contentDescription = null,
-            tint               = DukaCredColors.Error,
+            tint               = MaterialTheme.colorScheme.error,
             modifier           = Modifier.size(18.dp),
         )
         Spacer(Modifier.width(10.dp))
         Text(
             text  = message,
             style = MaterialTheme.typography.bodyMedium,
-            color = DukaCredColors.Error,
+            color = MaterialTheme.colorScheme.error,
         )
     }
 }

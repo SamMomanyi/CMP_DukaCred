@@ -38,8 +38,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.samduka.dukacred.core.designsystem.DukaCredColors
-import com.samduka.dukacred.core.designsystem.component.DukaCredPrimaryButton
+import com.samduka.dukacred.core.designsystem.components.DukaPrimaryButton
 
 private data class ProfileMenuItem(
     val title: String,
@@ -62,16 +61,16 @@ fun ProfileScreen(
     onLogoutClick: () -> Unit = {},
 ) {
     Scaffold(
-        containerColor = DukaCredColors.ForestGreen900,
+        containerColor = MaterialTheme.colorScheme.primaryContainer,
         bottomBar = {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(DukaCredColors.ForestGreen900)
+                    .background(MaterialTheme.colorScheme.primaryContainer)
                     .navigationBarsPadding()
                     .padding(horizontal = 20.dp, vertical = 16.dp)
             ) {
-                DukaCredPrimaryButton(
+                DukaPrimaryButton(
                     text = "Log Out",
                     onClick = onLogoutClick,
                     modifier = Modifier
@@ -79,11 +78,9 @@ fun ProfileScreen(
                         .height(60.dp)
                         .border(
                             width = 1.5.dp,
-                            color = DukaCredColors.Error,
+                            color = MaterialTheme.colorScheme.error,
                             shape = MaterialTheme.shapes.medium,
                         ),
-                    containerColor = Color.Transparent,
-                    contentColor = DukaCredColors.Error,
                 )
             }
         },
@@ -91,7 +88,7 @@ fun ProfileScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(DukaCredColors.ForestGreen900)
+                .background(MaterialTheme.colorScheme.primaryContainer)
                 .padding(innerPadding),
             contentPadding = PaddingValues(bottom = 12.dp),
             verticalArrangement = Arrangement.spacedBy(18.dp),
@@ -107,7 +104,7 @@ fun ProfileScreen(
                 Text(
                     text = "Settings",
                     modifier = Modifier.padding(horizontal = 20.dp),
-                    color = DukaCredColors.Cream300,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
                 )
@@ -118,7 +115,7 @@ fun ProfileScreen(
                     modifier = Modifier
                         .padding(horizontal = 20.dp)
                         .clip(RoundedCornerShape(24.dp))
-                        .background(DukaCredColors.ForestGreen800),
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh),
                 ) {
                     profileMenuItems.forEachIndexed { index, item ->
                         SettingsMenuRow(
@@ -154,13 +151,13 @@ private fun ProfileHeader(
             modifier = Modifier
                 .size(76.dp)
                 .clip(CircleShape)
-                .background(DukaCredColors.ForestGreen700),
+                .background(MaterialTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center,
         ) {
             Icon(
                 imageVector = Icons.Rounded.PersonOutline,
                 contentDescription = "Merchant avatar",
-                tint = DukaCredColors.Cream100,
+                tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.size(38.dp),
             )
         }
@@ -171,13 +168,13 @@ private fun ProfileHeader(
         ) {
             Text(
                 text = merchantName,
-                color = DukaCredColors.Cream100,
+                color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
             )
             Text(
                 text = phoneNumber,
-                color = DukaCredColors.Cream300,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyLarge,
             )
         }
@@ -206,34 +203,34 @@ private fun SettingsMenuRow(
                 modifier = Modifier
                     .size(42.dp)
                     .clip(CircleShape)
-                    .background(DukaCredColors.ForestGreen700),
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     imageVector = item.icon,
                     contentDescription = item.title,
-                    tint = DukaCredColors.Ochre400,
+                    tint = MaterialTheme.colorScheme.tertiary,
                 )
             }
 
             Text(
                 text = item.title,
                 modifier = Modifier.weight(1f),
-                color = DukaCredColors.Cream100,
+                color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.titleMedium,
             )
 
             Icon(
                 imageVector = Icons.Rounded.ChevronRight,
                 contentDescription = "${item.title} chevron",
-                tint = DukaCredColors.Cream300,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
 
         if (showDivider) {
             HorizontalDivider(
                 modifier = Modifier.padding(horizontal = 18.dp),
-                color = DukaCredColors.WhiteAlpha10,
+                color = Color.White.copy(alpha = 0.1f),
                 thickness = 1.dp,
             )
         }

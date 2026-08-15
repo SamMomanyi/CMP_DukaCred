@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -25,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.samduka.dukacred.core.designsystem.DukaCredColors
 
 // 1. Define the tabs with real Material Icons
 enum class DashboardTab(val label: String, val icon: ImageVector) {
@@ -42,10 +42,10 @@ fun DashboardShellScreen(
     var selectedTab by remember { mutableStateOf(DashboardTab.Home) }
 
     Scaffold(
-        containerColor = DukaCredColors.ForestGreen900,
+        containerColor = MaterialTheme.colorScheme.primaryContainer,
         bottomBar = {
             NavigationBar(
-                containerColor = DukaCredColors.ForestGreen800,
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                 tonalElevation = 0.dp
             ) {
                 DashboardTab.values().forEach { tab ->
@@ -69,10 +69,10 @@ fun DashboardShellScreen(
                         },
                         label = { Text(text = tab.label) },
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = DukaCredColors.Ochre500,
-                            selectedTextColor = DukaCredColors.Ochre500,
-                            unselectedIconColor = DukaCredColors.Cream300,
-                            unselectedTextColor = DukaCredColors.Cream300,
+                            selectedIconColor = MaterialTheme.colorScheme.tertiary,
+                            selectedTextColor = MaterialTheme.colorScheme.tertiary,
+                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             indicatorColor = Color.Transparent
                         )
                     )
@@ -84,7 +84,7 @@ fun DashboardShellScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .background(DukaCredColors.ForestGreen900)
+                .background(MaterialTheme.colorScheme.primaryContainer)
         ) {
             when (selectedTab) {
                 DashboardTab.Home -> {
@@ -114,7 +114,7 @@ private fun StubScreen(label: String) {
     ) {
         Text(
             text = label,
-            color = DukaCredColors.Cream300
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

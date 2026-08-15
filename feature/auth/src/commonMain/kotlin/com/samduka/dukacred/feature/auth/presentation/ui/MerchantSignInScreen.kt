@@ -37,9 +37,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.samduka.dukacred.core.designsystem.DukaCredColors
-import com.samduka.dukacred.core.designsystem.component.DukaCredPrimaryButton
-import com.samduka.dukacred.core.designsystem.component.DukaCredTextField
+import com.samduka.dukacred.core.designsystem.components.DukaPrimaryButton
+import com.samduka.dukacred.core.designsystem.components.DukaInputField
 import com.samduka.dukacred.core.designsystem.generated.resources.Res
 import com.samduka.dukacred.core.designsystem.generated.resources.merchant_signin_back
 import com.samduka.dukacred.core.designsystem.generated.resources.merchant_signin_contact_support
@@ -85,8 +84,8 @@ fun MerchantSignInScreen(
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
-                        DukaCredColors.ForestGreen900,
-                        DukaCredColors.Charcoal800,
+                        MaterialTheme.colorScheme.primaryContainer,
+                        MaterialTheme.colorScheme.surfaceContainerHigh,
                     )
                 )
             )
@@ -100,7 +99,7 @@ fun MerchantSignInScreen(
                 .background(
                     Brush.radialGradient(
                         colors = listOf(
-                            DukaCredColors.Ochre500.copy(alpha = 0.12f),
+                            MaterialTheme.colorScheme.tertiary.copy(alpha = 0.12f),
                             Color.Transparent,
                         )
                     )
@@ -122,7 +121,7 @@ fun MerchantSignInScreen(
                 Icon(
                     imageVector        = Icons.AutoMirrored.Rounded.ArrowBack,
                     contentDescription = stringResource(Res.string.merchant_signin_back),
-                    tint               = DukaCredColors.Cream200,
+                    tint               = MaterialTheme.colorScheme.onSurface,
                 )
             }
 
@@ -134,7 +133,7 @@ fun MerchantSignInScreen(
                 // Role badge
                 RoleBadge(
                     text  = stringResource(Res.string.role_merchant_title),
-                    color = DukaCredColors.Ochre400,
+                    color = MaterialTheme.colorScheme.tertiary,
                 )
 
                 Spacer(Modifier.height(16.dp))
@@ -144,7 +143,7 @@ fun MerchantSignInScreen(
                     style = MaterialTheme.typography.headlineLarge.copy(
                         letterSpacing = (-0.5).sp,
                     ),
-                    color = DukaCredColors.Cream100,
+                    color = MaterialTheme.colorScheme.onPrimary,
                 )
 
                 Spacer(Modifier.height(8.dp))
@@ -152,37 +151,39 @@ fun MerchantSignInScreen(
                 Text(
                     text  = stringResource(Res.string.merchant_signin_subheading),
                     style = MaterialTheme.typography.bodyLarge,
-                    color = DukaCredColors.Cream300,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
 
                 Spacer(Modifier.height(48.dp))
 
-                DukaCredTextField(
+                DukaInputField(
                     value         = state.email,
                     onValueChange = { viewModel.onAction(MerchantSignInAction.EmailChanged(it)) },
                     label         = "Email",
                     placeholder   = "Enter your email",
-                    errorMessage  = state.emailError,
+                    isError = state.emailError != null,
+                    errorText = state.emailError,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 )
 
                 Spacer(Modifier.height(20.dp))
 
                 // Password field
-                DukaCredTextField(
+                DukaInputField(
                     value         = state.password,
                     onValueChange = { viewModel.onAction(MerchantSignInAction.PasswordChanged(it)) },
                     label                = "Password",
                     placeholder          = "Enter your password",
-                    errorMessage         = state.passwordError,
-                    visualTransformation = if (state.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    isError = state.passwordError != null,
+                    errorText = state.passwordError,
+                    isPassword = true,
                     keyboardOptions      = KeyboardOptions(keyboardType = KeyboardType.Password),
                     trailingIcon = {
                         IconButton(onClick = { viewModel.onAction(MerchantSignInAction.TogglePasswordVisibility) }) {
                             Icon(
                                 imageVector = if (state.isPasswordVisible) Icons.Rounded.VisibilityOff else Icons.Rounded.Visibility,
                                 contentDescription = null,
-                                tint = DukaCredColors.Cream300,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                     },
@@ -196,15 +197,13 @@ fun MerchantSignInScreen(
 
                 Spacer(Modifier.height(36.dp))
 
-                DukaCredPrimaryButton(
+                DukaPrimaryButton(
                     text       = if (state.isLoading)
                         stringResource(Res.string.merchant_signin_loading)
                     else
                         stringResource(Res.string.merchant_signin_cta),
                     onClick    = { viewModel.onAction(MerchantSignInAction.SignInClicked) },
-                    isLoading  = state.isLoading,
-                    containerColor = DukaCredColors.Ochre500,
-                    contentColor   = DukaCredColors.Cream100,
+                    loading = state.isLoading,
                 )
 
                 Spacer(Modifier.height(32.dp))
@@ -215,13 +214,13 @@ fun MerchantSignInScreen(
                     Text(
                         text  = stringResource(Res.string.merchant_signin_no_account),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = DukaCredColors.Cream300,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
                         text  = stringResource(Res.string.merchant_signin_contact_support),
                         style = MaterialTheme.typography.labelLarge,
-                        color = DukaCredColors.Ochre400,
+                        color = MaterialTheme.colorScheme.tertiary,
                     )
                 }
 
@@ -239,13 +238,13 @@ fun MerchantSignInScreen(
                 Text(
                     text  = "New to DukaCred?",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = DukaCredColors.Cream300,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 TextButton(onClick = { viewModel.onAction(MerchantSignInAction.SignUpClicked) }) {
                     Text(
                         text  = "Create Account",
                         style = MaterialTheme.typography.labelLarge,
-                        color = DukaCredColors.Ochre400,
+                        color = MaterialTheme.colorScheme.tertiary,
                     )
                 }
             }

@@ -25,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -45,7 +46,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.samduka.dukacred.core.designsystem.DukaCredColors
 import com.samduka.dukacred.feature.invoicecapture.presentation.InvoiceCaptureEffect
 import com.samduka.dukacred.feature.invoicecapture.presentation.InvoiceCaptureIntent
 import com.samduka.dukacred.feature.invoicecapture.presentation.InvoiceCaptureState
@@ -160,12 +160,12 @@ fun InvoiceCaptureScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(DukaCredColors.ForestGreen900),
+                        .background(MaterialTheme.colorScheme.primaryContainer),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         text = "Camera permission required to capture invoices.",
-                        color = DukaCredColors.Cream100,
+                        color = MaterialTheme.colorScheme.onPrimary,
                     )
                 }
             },
@@ -183,7 +183,7 @@ fun InvoiceCaptureScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.TopStart)
-                .background(DukaCredColors.BlackAlpha40)
+                .background(Color.Black.copy(alpha = 0.4f))
                 .statusBarsPadding()
                 .padding(horizontal = 12.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -192,12 +192,12 @@ fun InvoiceCaptureScreen(
                 onClick = onClose,
                 modifier = Modifier
                     .clip(CircleShape)
-                    .background(DukaCredColors.WhiteAlpha10),
+                    .background(Color.White.copy(alpha = 0.1f)),
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Close,
                     contentDescription = "Close camera",
-                    tint = DukaCredColors.Cream100,
+                    tint = MaterialTheme.colorScheme.onPrimary,
                 )
             }
         }
@@ -248,9 +248,9 @@ fun InvoiceCaptureScreen(
         // Inner circle colour signals device state at a glance
         val innerColor by animateColorAsState(
             targetValue = when {
-                isShaking -> DukaCredColors.Error
+                isShaking -> MaterialTheme.colorScheme.error
                 documentLocked && !isCounting -> Color(0xFF4CAF50)  // green lock
-                else -> DukaCredColors.Ochre400
+                else -> MaterialTheme.colorScheme.tertiary
             },
             animationSpec = tween(300),
             label = "inner_circle_color",
@@ -269,15 +269,15 @@ fun InvoiceCaptureScreen(
                 enabled = canCapture,
                 modifier = Modifier.size(88.dp),
                 shape = CircleShape,
-                color = if (canCapture) DukaCredColors.Cream100 else DukaCredColors.Cream300,
-                contentColor = DukaCredColors.ForestGreen900,
+                color = if (canCapture) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                contentColor = MaterialTheme.colorScheme.primaryContainer,
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     when {
                         cameraController.isCapturing || isScanning -> {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(32.dp),
-                                color = DukaCredColors.ForestGreen900,
+                                color = MaterialTheme.colorScheme.primaryContainer,
                                 strokeWidth = 3.dp,
                             )
                         }
@@ -326,13 +326,13 @@ private fun CountdownOverlay(countdown: Int) {
                 .size(128.dp)
                 .graphicsLayer { scaleX = scale; scaleY = scale }
                 .clip(CircleShape)
-                .background(DukaCredColors.ForestGreen900.copy(alpha = 0.92f))
-                .border(3.dp, DukaCredColors.Ochre400, CircleShape),
+                .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.92f))
+                .border(3.dp, MaterialTheme.colorScheme.tertiary, CircleShape),
             contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = "$countdown",
-                color = DukaCredColors.Cream100,
+                color = MaterialTheme.colorScheme.onPrimary,
                 fontSize = 56.sp,
                 fontWeight = FontWeight.ExtraBold,
                 lineHeight = 56.sp,

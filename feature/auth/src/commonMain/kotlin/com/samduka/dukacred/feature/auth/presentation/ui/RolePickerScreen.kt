@@ -36,7 +36,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.samduka.dukacred.core.designsystem.DukaCredColors
 import com.samduka.dukacred.core.designsystem.generated.resources.Res
 import com.samduka.dukacred.core.designsystem.generated.resources.app_name
 import com.samduka.dukacred.core.designsystem.generated.resources.app_tagline
@@ -83,9 +82,9 @@ fun RolePickerScreen(
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
-                        DukaCredColors.ForestGreen900,
-                        DukaCredColors.ForestGreen800,
-                        DukaCredColors.Charcoal800,
+                        MaterialTheme.colorScheme.primaryContainer,
+                        MaterialTheme.colorScheme.surfaceContainerHigh,
+                        MaterialTheme.colorScheme.surfaceContainerHigh,
                     )
                 )
             )
@@ -98,7 +97,7 @@ fun RolePickerScreen(
                 .background(
                     Brush.radialGradient(
                         colors = listOf(
-                            DukaCredColors.ForestGreen500.copy(alpha = 0.25f),
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
                             Color.Transparent,
                         )
                     )
@@ -113,7 +112,7 @@ fun RolePickerScreen(
                 .background(
                     Brush.radialGradient(
                         colors = listOf(
-                            DukaCredColors.Ochre500.copy(alpha = 0.15f),
+                            MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f),
                             Color.Transparent,
                         )
                     )
@@ -122,7 +121,7 @@ fun RolePickerScreen(
 
         if (state.isCheckingSession) {
             CircularProgressIndicator(
-                color    = DukaCredColors.ForestGreen400,
+                color    = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.align(Alignment.Center),
             )
         } else {
@@ -141,7 +140,7 @@ fun RolePickerScreen(
                     style = MaterialTheme.typography.displayMedium.copy(
                         letterSpacing = (-1).sp,
                     ),
-                    color = DukaCredColors.Cream100,
+                    color = MaterialTheme.colorScheme.onPrimary,
                 )
 
                 Spacer(Modifier.height(6.dp))
@@ -155,14 +154,14 @@ fun RolePickerScreen(
                         modifier = Modifier
                             .size(6.dp)
                             .background(
-                                DukaCredColors.ForestGreen400,
+                                MaterialTheme.colorScheme.primary,
                                 RoundedCornerShape(50),
                             )
                     )
                     Text(
                         text  = "  " + stringResource(Res.string.app_tagline),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = DukaCredColors.Cream300,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
 
@@ -171,7 +170,7 @@ fun RolePickerScreen(
                 Text(
                     text      = stringResource(Res.string.role_picker_headline),
                     style     = MaterialTheme.typography.headlineLarge,
-                    color     = DukaCredColors.Cream100,
+                    color     = MaterialTheme.colorScheme.onPrimary,
                     textAlign = TextAlign.Center,
                 )
 
@@ -180,7 +179,7 @@ fun RolePickerScreen(
                 Text(
                     text      = stringResource(Res.string.role_picker_subheading),
                     style     = MaterialTheme.typography.bodyLarge,
-                    color     = DukaCredColors.Cream300,
+                    color     = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                 )
 
@@ -191,8 +190,8 @@ fun RolePickerScreen(
                     title        = stringResource(Res.string.role_merchant_title),
                     subtitle     = stringResource(Res.string.role_merchant_subtitle),
                     ctaText      = stringResource(Res.string.role_merchant_cta),
-                    accentColor  = DukaCredColors.Ochre400,
-                    surfaceColor = DukaCredColors.ForestGreen700,
+                    accentColor  = MaterialTheme.colorScheme.tertiary,
+                    surfaceColor = MaterialTheme.colorScheme.surfaceVariant,
                     emoji        = "🏪",
                     onClick      = {
                         viewModel.onAction(RolePickerAction.SelectMerchant)
@@ -206,8 +205,8 @@ fun RolePickerScreen(
                     title        = stringResource(Res.string.role_admin_title),
                     subtitle     = stringResource(Res.string.role_admin_subtitle),
                     ctaText      = stringResource(Res.string.role_admin_cta),
-                    accentColor  = DukaCredColors.ForestGreen400,
-                    surfaceColor = DukaCredColors.ForestGreen700,
+                    accentColor  = MaterialTheme.colorScheme.primary,
+                    surfaceColor = MaterialTheme.colorScheme.surfaceVariant,
                     emoji        = "📊",
                     onClick      = {
                         viewModel.onAction(RolePickerAction.SelectAdmin)
@@ -219,7 +218,7 @@ fun RolePickerScreen(
                 Text(
                     text   = "© 2026 DukaCred · Kenya",
                     style  = MaterialTheme.typography.labelSmall,
-                    color  = DukaCredColors.Cream300.copy(alpha = 0.5f),
+                    color  = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                 )
                 Spacer(Modifier.height(24.dp))
             }
@@ -287,7 +286,7 @@ private fun RoleCard(
                 Text(
                     text  = title,
                     style = MaterialTheme.typography.titleLarge,
-                    color = DukaCredColors.Cream100,
+                    color = MaterialTheme.colorScheme.onPrimary,
                 )
             }
 
@@ -296,7 +295,7 @@ private fun RoleCard(
             Text(
                 text  = subtitle,
                 style = MaterialTheme.typography.bodyMedium,
-                color = DukaCredColors.Cream300,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
             Spacer(Modifier.height(20.dp))

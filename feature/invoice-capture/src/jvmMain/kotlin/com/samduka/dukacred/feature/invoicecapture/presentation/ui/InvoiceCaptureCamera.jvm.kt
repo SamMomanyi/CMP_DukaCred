@@ -3,11 +3,11 @@ package com.samduka.dukacred.feature.invoicecapture.presentation.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.samduka.dukacred.core.designsystem.DukaCredColors
 
 actual class InvoiceCaptureCameraController {
     actual val isCameraReady: Boolean = false
@@ -34,12 +34,12 @@ actual fun InvoiceCapturePreview(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(DukaCredColors.ForestGreen900),
+            .background(MaterialTheme.colorScheme.primaryContainer),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = "Camera preview is unavailable on the desktop JVM target.",
-            color = DukaCredColors.Cream100
+            color = MaterialTheme.colorScheme.onPrimary
         )
     }
 }

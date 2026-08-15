@@ -30,13 +30,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.samduka.dukacred.core.designsystem.DukaCredColors
 import com.samduka.dukacred.feature.invoicecapture.domain.InvoiceLineItem
 import kotlin.math.abs
 import kotlin.math.round
 
 // Same green ScannerOverlay uses for its "document locked" state — reused
-// here for visual consistency since it's not in the confirmed DukaCredColors set.
+// here for visual consistency since it is not part of the confirmed design tokens.
 internal val InvoiceSuccessGreen = Color(0xFF4CAF50)
 
 /** Multiplatform-safe 2dp amount formatting — String.format is JVM-only. */
@@ -51,9 +50,9 @@ internal fun formatAmount(value: Double): String {
 
 @Composable
 internal fun dukaCredFieldColors() = OutlinedTextFieldDefaults.colors(
-    focusedBorderColor = DukaCredColors.ForestGreen900,
-    focusedLabelColor = DukaCredColors.ForestGreen900,
-    cursorColor = DukaCredColors.ForestGreen900,
+    focusedBorderColor = MaterialTheme.colorScheme.primary,
+    focusedLabelColor = MaterialTheme.colorScheme.primary,
+    cursorColor = MaterialTheme.colorScheme.primary,
 )
 
 @Composable
@@ -124,7 +123,7 @@ internal fun LineItemRow(
                 Icon(
                     imageVector = Icons.Rounded.Delete,
                     contentDescription = "Remove item",
-                    tint = DukaCredColors.Error,
+                    tint = MaterialTheme.colorScheme.error,
                 )
             }
         }
@@ -153,13 +152,13 @@ internal fun LineItemRow(
                 Text(
                     "Line total",
                     style = MaterialTheme.typography.labelSmall,
-                    color = DukaCredColors.ForestGreen900.copy(alpha = 0.6f),
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
                 )
                 Text(
                     formatAmount(lineItem.totalPrice),
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.SemiBold,
-                    color = DukaCredColors.ForestGreen900,
+                    color = MaterialTheme.colorScheme.primary,
                 )
             }
         }

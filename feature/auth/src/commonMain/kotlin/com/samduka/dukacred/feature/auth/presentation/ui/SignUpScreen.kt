@@ -15,9 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import com.samduka.dukacred.core.designsystem.DukaCredColors
-import com.samduka.dukacred.core.designsystem.component.DukaCredPrimaryButton
-import com.samduka.dukacred.core.designsystem.component.DukaCredTextField
+import com.samduka.dukacred.core.designsystem.components.DukaPrimaryButton
+import com.samduka.dukacred.core.designsystem.components.DukaInputField
 import com.samduka.dukacred.core.domain.model.UserRole
 import com.samduka.dukacred.feature.auth.presentation.action.SignUpAction
 import com.samduka.dukacred.feature.auth.presentation.effect.MerchantSignInEffect
@@ -50,7 +49,7 @@ fun SignUpScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(DukaCredColors.ForestGreen900)
+            .background(MaterialTheme.colorScheme.primaryContainer)
             .imePadding()
     ) {
         Column(
@@ -65,13 +64,13 @@ fun SignUpScreen(
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                     contentDescription = "Back",
-                    tint = DukaCredColors.Cream100,
+                    tint = MaterialTheme.colorScheme.onPrimary,
                 )
             }
             Spacer(Modifier.height(24.dp))
-            Text("Create Account", style = MaterialTheme.typography.headlineLarge, color = DukaCredColors.Cream100)
+            Text("Create Account", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.onPrimary)
             Spacer(Modifier.height(8.dp))
-            Text("Set up your DukaCred account", style = MaterialTheme.typography.bodyLarge, color = DukaCredColors.Cream300)
+            Text("Set up your DukaCred account", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(Modifier.height(32.dp))
 
             // Role toggle
@@ -81,7 +80,7 @@ fun SignUpScreen(
             ) {
                 UserRole.entries.forEach { role ->
                     val selected = state.selectedRole == role
-                    val accent = if (role == UserRole.MERCHANT) DukaCredColors.Ochre400 else DukaCredColors.ForestGreen400
+                    val accent = if (role == UserRole.MERCHANT) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.primary
                     FilterChip(
                         selected = selected,
                         onClick = { viewModel.onAction(SignUpAction.RoleSelected(role)) },
@@ -97,37 +96,37 @@ fun SignUpScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            DukaCredTextField(
+            DukaInputField(
                 value = state.email,
                 onValueChange = { viewModel.onAction(SignUpAction.EmailChanged(it)) },
                 label = "Email",
-                errorMessage = state.emailError,
+                isError = state.emailError != null,
+                errorText = state.emailError,
             )
             Spacer(Modifier.height(16.dp))
-            DukaCredTextField(
+            DukaInputField(
                 value = state.password,
                 onValueChange = { viewModel.onAction(SignUpAction.PasswordChanged(it)) },
                 label = "Password",
-                errorMessage = state.passwordError,
-                visualTransformation = if (state.isPasswordVisible) VisualTransformation.None
-                else PasswordVisualTransformation(),
+                isError = state.passwordError != null,
+                errorText = state.passwordError,
+                isPassword = true,
                 trailingIcon = {
                     IconButton(onClick = { viewModel.onAction(SignUpAction.TogglePasswordVisibility) }) {
                         Icon(
                             imageVector = if (state.isPasswordVisible) Icons.Rounded.VisibilityOff else Icons.Rounded.Visibility,
                             contentDescription = null,
-                            tint = DukaCredColors.Cream300,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 },
             )
             Spacer(Modifier.height(16.dp))
-            DukaCredTextField(
+            DukaInputField(
                 value = state.confirmPassword,
                 onValueChange = { viewModel.onAction(SignUpAction.ConfirmPasswordChanged(it)) },
                 label = "Confirm Password",
-                visualTransformation = if (state.isPasswordVisible) VisualTransformation.None
-                else PasswordVisualTransformation(),
+                isPassword = true,
             )
 
             state.generalError?.let {
@@ -138,12 +137,11 @@ fun SignUpScreen(
 
             Spacer(Modifier.height(32.dp))
 
-            val accent = if (state.selectedRole == UserRole.MERCHANT) DukaCredColors.Ochre400 else DukaCredColors.ForestGreen400
-            DukaCredPrimaryButton(
+            val accent = if (state.selectedRole == UserRole.MERCHANT) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.primary
+            DukaPrimaryButton(
                 text = "Create Account",
                 onClick = { viewModel.onAction(SignUpAction.SignUpClicked) },
-                isLoading = state.isLoading,
-                containerColor = accent,
+                loading = state.isLoading,
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(Modifier.height(40.dp))
