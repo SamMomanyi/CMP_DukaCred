@@ -22,3 +22,5 @@ node_modules/
 # Secrets & Config
 secrets/
 local.properties
+ARCHITECTURE.md
+.codex
