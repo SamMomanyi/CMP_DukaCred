@@ -5,25 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.samduka.dukacred.core.designsystem.generated.resources.Res
-import com.samduka.dukacred.core.designsystem.generated.resources.*
-import org.jetbrains.compose.resources.Font
-
-/**
- * `dukacred.core.designsystem.generated.resources` is the auto-generated
- * Compose Resources accessor for `core:designsystem`'s
- * `composeResources/font/` directory — regenerated on every Gradle sync once
- * the three files from the asset checklist are in place.
- */
-@Composable
-fun interFontFamily(): FontFamily = FontFamily(
-    Font(Res.font.inter_regular, weight = FontWeight.Normal),
-    Font(Res.font.inter_semibold, weight = FontWeight.SemiBold),
-    Font(Res.font.inter_bold, weight = FontWeight.Bold),
-)
+import com.samduka.dukacred.core.designsystem.DukaCredFonts
 
 /** Opt-in tabular-figure feature so digits in ledgers/balances align vertically. */
 fun TextStyle.asTabularNums(): TextStyle = copy(
@@ -36,6 +20,10 @@ fun TextStyle.asTabularNums(): TextStyle = copy(
  * `body-sm`, `label-caps`, `data-tabular`). Reach these via
  * `MaterialTheme.dukaTypography` for anything that doesn't cleanly map onto
  * an M3 `Typography` slot (e.g. `labelCaps`, `dataTabular`).
+ *
+ * Font pairing follows ARCHITECTURE.md §13: **Sora** for display/heading
+ * styles, **DM Sans** for body/label/data-tabular — both loaded via the
+ * existing [DukaCredFonts] accessor, not re-declared here.
  */
 @Immutable
 data class DukaTypography(
@@ -51,55 +39,56 @@ data class DukaTypography(
 
 @Composable
 fun buildDukaTypography(): DukaTypography {
-    val inter = interFontFamily()
+    val sora = DukaCredFonts.soraFamily()
+    val dmSans = DukaCredFonts.dmSansFamily()
     return DukaTypography(
         display = TextStyle(
-            fontFamily = inter,
+            fontFamily = sora,
             fontWeight = FontWeight.Bold,
             fontSize = 36.sp,
             lineHeight = 44.sp,
             letterSpacing = (-0.02).em(36),
         ),
         headlineLarge = TextStyle(
-            fontFamily = inter,
+            fontFamily = sora,
             fontWeight = FontWeight.SemiBold,
             fontSize = 28.sp,
             lineHeight = 34.sp,
             letterSpacing = (-0.01).em(28),
         ),
         headlineLargeMobile = TextStyle(
-            fontFamily = inter,
+            fontFamily = sora,
             fontWeight = FontWeight.SemiBold,
             fontSize = 24.sp,
             lineHeight = 30.sp,
         ),
         titleMedium = TextStyle(
-            fontFamily = inter,
+            fontFamily = sora,
             fontWeight = FontWeight.SemiBold,
             fontSize = 18.sp,
             lineHeight = 24.sp,
         ),
         bodyLarge = TextStyle(
-            fontFamily = inter,
+            fontFamily = dmSans,
             fontWeight = FontWeight.Normal,
             fontSize = 16.sp,
             lineHeight = 24.sp,
         ),
         bodySmall = TextStyle(
-            fontFamily = inter,
+            fontFamily = dmSans,
             fontWeight = FontWeight.Normal,
             fontSize = 14.sp,
             lineHeight = 20.sp,
         ),
         labelCaps = TextStyle(
-            fontFamily = inter,
-            fontWeight = FontWeight.Bold,
+            fontFamily = dmSans,
+            fontWeight = FontWeight.SemiBold,
             fontSize = 12.sp,
             lineHeight = 16.sp,
             letterSpacing = 0.05.em(12),
         ),
         dataTabular = TextStyle(
-            fontFamily = inter,
+            fontFamily = dmSans,
             fontWeight = FontWeight.SemiBold,
             fontSize = 16.sp,
             lineHeight = 20.sp,
