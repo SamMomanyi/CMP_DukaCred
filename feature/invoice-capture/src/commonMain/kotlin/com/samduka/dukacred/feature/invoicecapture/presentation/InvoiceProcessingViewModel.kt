@@ -6,7 +6,8 @@ import com.samduka.dukacred.feature.invoicecapture.domain.InvoiceImageCache
 import com.samduka.dukacred.feature.invoicecapture.domain.InvoiceLineItem
 import com.samduka.dukacred.feature.invoicecapture.domain.InvoiceValidator
 import com.samduka.dukacred.feature.invoicecapture.domain.ParsedInvoice
-import com.samduka.dukacred.feature.invoicecapture.domain.repository.InvoiceRepository
+import com.samduka.dukacred.feature.invoicecapture.domain.usecase.ExtractInvoiceDataUseCase
+import com.samduka.dukacred.feature.invoicecapture.domain.usecase.SaveInvoiceDraftUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +17,8 @@ import kotlinx.coroutines.launch
 
 class InvoiceProcessingViewModel(
     private val imageCache: InvoiceImageCache,
-    private val repository: InvoiceRepository,
+    private val extractInvoiceData: ExtractInvoiceDataUseCase,
+    private val saveInvoiceDraft: SaveInvoiceDraftUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<InvoiceProcessingState>(InvoiceProcessingState.Loading)
@@ -77,7 +79,7 @@ class InvoiceProcessingViewModel(
 
             try {
                 // We wrap this in a strict try/catch to prevent silent coroutine crashes
-                repository.extractInvoice(bytes)
+                extractInvoiceData(bytes)
                     .onSuccess { invoice ->
                         _state.value = InvoiceProcessingState.Success(
                             invoice = invoice,
@@ -122,7 +124,7 @@ class InvoiceProcessingViewModel(
         }
         viewModelScope.launch {
             _state.value = current.copy(isSaving = true)
-            repository.confirmAndSaveInvoice(current.invoice, bytes)
+            saveInvoiceDraft(current.invoice, bytes)
                 .onSuccess {
                     imageCache.capturedImageBytes = null
                     _effect.send(InvoiceProcessingEffect.NavigateToDashboard)
