@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">DukaCred</string>
+    <string name="home_cashflow_title">Cashflow Overview</string>
 </resources>

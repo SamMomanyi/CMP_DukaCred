@@ -20,6 +20,7 @@ import com.samduka.dukacred.feature.auth.presentation.ui.RolePickerScreen
 import com.samduka.dukacred.feature.auth.presentation.ui.SignUpScreen
 import com.samduka.dukacred.feature.invoicecapture.presentation.ui.InvoiceCaptureScreen
 import com.samduka.dukacred.feature.invoicecapture.domain.InvoiceImageCache
+import com.samduka.dukacred.feature.invoicecapture.presentation.CaptureScreen
 import org.koin.compose.koinInject
 
 @Composable
@@ -119,35 +120,21 @@ fun AppNavigation() {
                     }
                 )
             }
-
             composable<AppRoute.InvoiceCapture> {
-                // Inject the cache singleton
-                val imageCache: InvoiceImageCache = koinInject()
-
-                InvoiceCaptureScreen(
+                CaptureScreen(
                     onClose = {
                         navController.popBackStack()
                     },
-                    onImageCaptured = { bytes ->
-                        // 1. Save the massive byte array to the cache
-                        imageCache.capturedImageBytes = bytes
-
-                        // 2. Safely pop the heavy camera screen off the stack
-                        navController.popBackStack()
-
-                        // 3. Navigate to the processing screen
-                        navController.navigate(AppRoute.InvoiceProcessing)
-                    }
+                    onNavigateToAdjustment = { invoiceId ->
+                        navController.navigate(AppRoute.SmartAdjustment(invoiceId)) {
+                            // Capture screen is done with its job once a draft is saved —
+                            // don't leave it on the back stack under the adjustment screen.
+                            popUpTo<AppRoute.InvoiceCapture> { inclusive = true }
+                        }
+                    },
                 )
             }
 
-            // The new processing screen
-            composable<AppRoute.InvoiceProcessing> {
-                val imageCache: InvoiceImageCache = koinInject()
-
-                // Temporary stub until we build the actual AI API call
-                StubScreen("Processing ${imageCache.capturedImageBytes?.size ?: 0} bytes...")
-            }
         }
 
         // ── ADMIN GRAPH ──────────────────────────────────────────────
