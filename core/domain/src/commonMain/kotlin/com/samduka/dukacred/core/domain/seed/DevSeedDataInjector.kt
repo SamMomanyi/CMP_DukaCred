@@ -64,7 +64,7 @@ class DevSeedDataInjector(
     ): List<CashflowAggregate> =
         (29 downTo 0).map { daysAgo ->
             val date = today.minus(DatePeriod(days = daysAgo))
-            val weekdayLift = if (date.dayOfWeek.isoDayNumber >= 6) 1_800_00L else 0L
+            val weekdayLift = if (date.dayOfWeek.ordinal >= 5) 1_800_00L else 0L
             val baseSales = 8_500_00L + ((29 - daysAgo) * 145_00L) + weekdayLift
             val invoiceSpend = if (daysAgo % 6 == 0) 3_200_00L + (daysAgo * 35_00L) else 850_00L
 
