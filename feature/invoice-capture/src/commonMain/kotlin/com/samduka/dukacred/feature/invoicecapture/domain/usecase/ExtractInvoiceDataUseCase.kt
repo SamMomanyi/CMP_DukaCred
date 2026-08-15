@@ -9,6 +9,6 @@ class ExtractInvoiceDataUseCase(
 ) {
     suspend operator fun invoke(compressedImage: ByteArray): Result<InvoiceDraft> {
         if (compressedImage.isEmpty()) return Result.failure(IllegalArgumentException("Compressed image is empty"))
-        return invoiceOcrService.extractInvoiceData(compressedImage)
+        return runCatching { invoiceOcrService.extractInvoiceData(compressedImage).getOrThrow() }
     }
 }
