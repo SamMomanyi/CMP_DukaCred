@@ -50,7 +50,7 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun ManualInvoiceEditScreen(
     invoiceId: String,
-    onBack: () -> Unit,
+    onBack: (didSave: Boolean) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ManualInvoiceEditViewModel = koinViewModel { parametersOf(invoiceId) },
 ) {
@@ -59,7 +59,8 @@ fun ManualInvoiceEditScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
-                ManualInvoiceEditEffect.NavigateBack -> onBack()
+                ManualInvoiceEditEffect.NavigateBack -> onBack(false)
+                ManualInvoiceEditEffect.NavigateBackWithSavedChanges -> onBack(true)
                 // ShowError: wire to a SnackbarHostState once this screen owns one.
                 is ManualInvoiceEditEffect.ShowError -> Unit
             }
@@ -77,7 +78,7 @@ fun ManualInvoiceEditScreen(
                     .padding(horizontal = 12.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                IconButton(onClick = onBack) {
+                IconButton(onClick = { onBack(false) }) {
                     Icon(Icons.Rounded.ArrowBack, contentDescription = "Back", tint = Color.White)
                 }
                 Spacer(Modifier.width(4.dp))

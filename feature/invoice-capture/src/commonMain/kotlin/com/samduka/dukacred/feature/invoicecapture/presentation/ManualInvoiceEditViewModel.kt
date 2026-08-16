@@ -81,11 +81,7 @@ class ManualInvoiceEditViewModel(
             _state.value = _state.value.copy(isSaving = true)
             updateInvoiceDraft(invoice)
                 .onSuccess {
-                    // NOTE: InvoiceReviewScreen (the screen we came from) has no
-                    // way to know an edit happened — no nav-result plumbing yet.
-                    // It'll show stale data until its own Retry/re-evaluate is
-                    // triggered some other way. Flagging rather than faking it.
-                    _effect.send(ManualInvoiceEditEffect.NavigateBack)
+                    _effect.send(ManualInvoiceEditEffect.NavigateBackWithSavedChanges)
                 }
                 .onFailure { error ->
                     _state.value = _state.value.copy(isSaving = false)

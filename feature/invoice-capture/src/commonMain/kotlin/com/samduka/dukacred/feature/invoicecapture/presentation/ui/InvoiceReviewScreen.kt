@@ -43,9 +43,9 @@ fun InvoiceReviewScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(invoiceWasEdited) {
         if (invoiceWasEdited) {
-            viewModel.onIntent(InvoiceReviewIntent.Retry)
+            viewModel.onIntent(InvoiceReviewIntent.RefreshAfterEdit)
             onInvoiceEditedHandled()
         }
     }

@@ -28,11 +28,12 @@ class InvoiceReviewViewModel(
     private val _effect = Channel<InvoiceReviewEffect>(Channel.BUFFERED)
     val effect: Flow<InvoiceReviewEffect> = _effect.receiveAsFlow()
 
-    init { evaluate() }
+    init { evaluate(isRefresh = false) }
 
     fun onIntent(intent: InvoiceReviewIntent) {
         when (intent) {
-            InvoiceReviewIntent.Retry -> evaluate()
+            InvoiceReviewIntent.Retry -> evaluate(isRefresh = false)
+            InvoiceReviewIntent.RefreshAfterEdit -> evaluate(isRefresh = true)
             InvoiceReviewIntent.NavigateBack -> sendEffect(InvoiceReviewEffect.NavigateBack)
             InvoiceReviewIntent.EditDetails -> handleEditDetails()
             InvoiceReviewIntent.ConfirmFullLoan -> confirmFullLoan()
@@ -41,17 +42,36 @@ class InvoiceReviewViewModel(
         }
     }
 
-    private fun evaluate() {
+    private fun evaluate(isRefresh: Boolean) {
         viewModelScope.launch {
-            _state.value = InvoiceReviewState.Evaluating
+            _state.value = if (isRefresh) {
+                _state.value.withRefreshing(true) ?: InvoiceReviewState.Evaluating
+            } else {
+                InvoiceReviewState.Evaluating
+            }
+
             evaluateFinancingRequest(invoiceId)
                 .onSuccess { decision -> _state.value = decision.toReviewState() }
                 .onFailure { error ->
-                    _state.value = InvoiceReviewState.Error(
-                        error.message ?: "We couldn't evaluate this invoice. Please try again."
-                    )
+                    val message = error.message ?: "We couldn't evaluate this invoice. Please try again."
+                    if (isRefresh) {
+                        // Re-check failed — keep the last-known-good card on
+                        // screen rather than blowing it away over a transient
+                        // network/backend hiccup. Surface the failure as a
+                        // toast instead of an Error state.
+                        _state.value = _state.value.withRefreshing(false) ?: _state.value
+                        sendEffect(InvoiceReviewEffect.ShowToast(message))
+                    } else {
+                        _state.value = InvoiceReviewState.Error(message)
+                    }
                 }
         }
+    }
+
+    private fun InvoiceReviewState.withRefreshing(value: Boolean): InvoiceReviewState? = when (this) {
+        is InvoiceReviewState.FullApproval -> copy(isRefreshing = value)
+        is InvoiceReviewState.PartialAdjustment -> copy(isRefreshing = value)
+        else -> null
     }
 
     private fun handleEditDetails() {

@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -128,18 +130,22 @@ fun AppNavigation() {
 
             composable<AppRoute.SmartAdjustment> { backStackEntry ->
                 val route: AppRoute.SmartAdjustment = backStackEntry.toRoute()
+                val invoiceWasEdited by backStackEntry.savedStateHandle
+                    .getStateFlow(INVOICE_EDITED_RESULT_KEY, false)
+                    .collectAsState()
 
                 InvoiceReviewScreen(
                     invoiceId = route.invoiceId,
+                    invoiceWasEdited = invoiceWasEdited,
+                    onInvoiceEditedHandled = {
+                        backStackEntry.savedStateHandle[INVOICE_EDITED_RESULT_KEY] = false
+                    },
                     onBack = { navController.popBackStack() },
                     onNavigateToManualEdit = { invoice ->
                         navController.navigate(AppRoute.ManualInvoiceEdit(invoiceId = invoice.id ?: route.invoiceId))
                     },
                     onNavigateToFinancingSuccess = { loanId ->
                         navController.navigate(AppRoute.FinancingSuccess(loanId)) {
-                            // Don't leave Verification/Smart Adjustment on the back stack
-                            // under the success screen — same reasoning as the earlier
-                            // Capture -> SmartAdjustment popUpTo.
                             popUpTo<AppRoute.SmartAdjustment> { inclusive = true }
                         }
                     },
@@ -150,7 +156,14 @@ fun AppNavigation() {
                 val route: AppRoute.ManualInvoiceEdit = backStackEntry.toRoute()
                 ManualInvoiceEditScreen(
                     invoiceId = route.invoiceId,
-                    onBack = { navController.popBackStack() },
+                    onBack = { didSave ->
+                        if (didSave) {
+                            navController.previousBackStackEntry
+                                ?.savedStateHandle
+                                ?.set(INVOICE_EDITED_RESULT_KEY, true)
+                        }
+                        navController.popBackStack()
+                    },
                 )
             }
 
