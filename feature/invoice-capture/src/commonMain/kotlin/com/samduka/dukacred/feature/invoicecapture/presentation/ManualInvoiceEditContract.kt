@@ -28,5 +28,6 @@ sealed interface ManualInvoiceEditIntent {
 
 sealed interface ManualInvoiceEditEffect {
     data object NavigateBack : ManualInvoiceEditEffect
+    data object NavigateBackWithSavedChanges : ManualInvoiceEditEffect
     data class ShowError(val message: String) : ManualInvoiceEditEffect
 }
