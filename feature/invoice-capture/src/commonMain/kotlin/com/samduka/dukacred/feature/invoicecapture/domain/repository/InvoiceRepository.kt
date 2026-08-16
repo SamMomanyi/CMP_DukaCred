@@ -2,6 +2,7 @@ package com.samduka.dukacred.feature.invoicecapture.domain.repository
 
 import com.samduka.dukacred.feature.invoicecapture.domain.ParsedInvoice
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 
 /**
  * Single source of truth for invoice data.
@@ -21,6 +22,17 @@ interface InvoiceRepository {
 
     /** Stream of saved invoices for history/dashboard surfaces. */
     fun getInvoiceHistory(): Flow<List<ParsedInvoice>>
+
+    /**
+     * Single-invoice fetch by id. Default impl piggybacks on
+     * [getInvoiceHistory] until a dedicated query exists — same tradeoff as
+     * [getRecentInvoices] below. SupabaseInvoiceRepository can override this
+     * with a real point query later without breaking any existing call site.
+     */
+    suspend fun getInvoiceById(invoiceId: String): Result<ParsedInvoice> = runCatching {
+        getInvoiceHistory().first().firstOrNull { it.id == invoiceId }
+            ?: throw NoSuchElementException("Invoice $invoiceId not found")
+    }
 
     /** Uploads a private receipt image and returns its storage object path. */
     suspend fun uploadInvoiceImage(bytes: ByteArray): Result<String>

@@ -4,12 +4,17 @@ package com.samduka.dukacred.feature.invoicecapture.presentation.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.samduka.dukacred.core.designsystem.components.DukaPrimaryButton
 import com.samduka.dukacred.core.designsystem.theme.*
 import com.samduka.dukacred.feature.invoicecapture.domain.ParsedInvoice
@@ -27,6 +33,7 @@ import com.samduka.dukacred.feature.invoicecapture.presentation.InvoiceReviewEff
 import com.samduka.dukacred.feature.invoicecapture.presentation.InvoiceReviewIntent
 import com.samduka.dukacred.feature.invoicecapture.presentation.InvoiceReviewState
 import com.samduka.dukacred.feature.invoicecapture.presentation.InvoiceReviewViewModel
+import com.samduka.dukacred.feature.invoicecapture.presentation.isRefreshing
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -97,7 +104,7 @@ private fun RecheckingBanner(visible: Boolean, modifier: Modifier = Modifier) {
         exit = androidx.compose.animation.fadeOut() + androidx.compose.animation.slideOutVertically { -it },
         modifier = modifier,
     ) {
-        androidx.compose.material3.Surface(
+        Surface(
             shape = MaterialTheme.dukaShapes.full,
             color = Color.Black.copy(alpha = 0.75f),
             border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)),
@@ -106,7 +113,7 @@ private fun RecheckingBanner(visible: Boolean, modifier: Modifier = Modifier) {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
             ) {
-                androidx.compose.material3.CircularProgressIndicator(
+                CircularProgressIndicator(
                     modifier = Modifier.size(14.dp),
                     color = MaterialTheme.colorScheme.primary,
                     strokeWidth = 2.dp,

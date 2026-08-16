@@ -21,13 +21,11 @@ import com.samduka.dukacred.feature.auth.presentation.ui.AdminSignInScreen
 import com.samduka.dukacred.feature.auth.presentation.ui.MerchantSignInScreen
 import com.samduka.dukacred.feature.auth.presentation.ui.RolePickerScreen
 import com.samduka.dukacred.feature.auth.presentation.ui.SignUpScreen
-import com.samduka.dukacred.feature.invoicecapture.presentation.ui.InvoiceCaptureScreen
-import com.samduka.dukacred.feature.invoicecapture.domain.InvoiceImageCache
-import com.samduka.dukacred.feature.invoicecapture.presentation.CaptureScreen
 import com.samduka.dukacred.feature.invoicecapture.presentation.ui.FinancingSuccessScreen
 import com.samduka.dukacred.feature.invoicecapture.presentation.ui.InvoiceReviewScreen
 import com.samduka.dukacred.feature.invoicecapture.presentation.ui.ManualInvoiceEditScreen
-import org.koin.compose.koinInject
+
+private const val INVOICE_EDITED_RESULT_KEY = "invoice_edited"
 
 @Composable
 fun AppNavigation() {
