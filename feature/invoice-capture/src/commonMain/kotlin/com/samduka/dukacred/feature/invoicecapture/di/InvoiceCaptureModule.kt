@@ -9,10 +9,14 @@ import com.samduka.dukacred.feature.invoicecapture.domain.repository.InvoiceRepo
 import com.samduka.dukacred.feature.invoicecapture.domain.usecase.AnalyzeFrameQualityUseCase
 import com.samduka.dukacred.feature.invoicecapture.domain.usecase.CompressImageUseCase
 import com.samduka.dukacred.feature.invoicecapture.domain.usecase.ExtractInvoiceDataUseCase
+import com.samduka.dukacred.feature.invoicecapture.domain.usecase.GetInvoiceByIdUseCase
 import com.samduka.dukacred.feature.invoicecapture.domain.usecase.SaveInvoiceDraftUseCase
+import com.samduka.dukacred.feature.invoicecapture.domain.usecase.UpdateInvoiceDraftUseCase
 import com.samduka.dukacred.feature.invoicecapture.presentation.CaptureViewModel
 import com.samduka.dukacred.feature.invoicecapture.presentation.InvoiceCaptureViewModel
 import com.samduka.dukacred.feature.invoicecapture.presentation.InvoiceProcessingViewModel
+import com.samduka.dukacred.feature.invoicecapture.presentation.InvoiceReviewViewModel
+import com.samduka.dukacred.feature.invoicecapture.presentation.ManualInvoiceEditViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import kotlinx.coroutines.CoroutineDispatcher
@@ -36,6 +40,8 @@ val invoiceCaptureModule = module {
     factory { CompressImageUseCase() }
     factory { ExtractInvoiceDataUseCase(invoiceOcrService = get()) }
     factory { SaveInvoiceDraftUseCase(invoiceRepository = get()) }
+    factory { GetInvoiceByIdUseCase(invoiceRepository = get()) }
+    factory { UpdateInvoiceDraftUseCase(invoiceRepository = get()) }
 
 
     viewModel {
@@ -60,6 +66,21 @@ val invoiceCaptureModule = module {
     viewModel {
         InvoiceCaptureViewModel(
             imageCache = get()
+        )
+    }
+    viewModel { parameters ->
+        InvoiceReviewViewModel(
+            invoiceId = parameters.get(),
+            evaluateFinancingRequest = get(),
+            confirmFinancingRequest = get(),
+        )
+    }
+
+    viewModel { parameters ->
+        ManualInvoiceEditViewModel(
+            invoiceId = parameters.get(),
+            getInvoiceById = get(),
+            updateInvoiceDraft = get(),
         )
     }
 }

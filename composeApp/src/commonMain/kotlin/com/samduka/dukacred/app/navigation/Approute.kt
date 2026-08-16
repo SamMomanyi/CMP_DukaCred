@@ -39,5 +39,11 @@ sealed class AppRoute {
     @Serializable
     data class SmartAdjustment(val invoiceId: String) : AppRoute()
 
+    @Serializable
+    data class ManualInvoiceEdit(val invoiceId: String) : AppRoute()
+
+    @Serializable
+    data class FinancingSuccess(val loanId: String) : AppRoute()
+
 }
 

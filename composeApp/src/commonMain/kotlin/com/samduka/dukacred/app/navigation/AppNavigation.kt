@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import androidx.navigation.toRoute
 import com.samduka.dukacred.app.presentation.AnimatedSplashScreen
 import com.samduka.dukacred.app.presentation.DashboardShellScreen
 import com.samduka.dukacred.feature.auth.presentation.ui.AdminSignInScreen
@@ -21,6 +22,9 @@ import com.samduka.dukacred.feature.auth.presentation.ui.SignUpScreen
 import com.samduka.dukacred.feature.invoicecapture.presentation.ui.InvoiceCaptureScreen
 import com.samduka.dukacred.feature.invoicecapture.domain.InvoiceImageCache
 import com.samduka.dukacred.feature.invoicecapture.presentation.CaptureScreen
+import com.samduka.dukacred.feature.invoicecapture.presentation.ui.FinancingSuccessScreen
+import com.samduka.dukacred.feature.invoicecapture.presentation.ui.InvoiceReviewScreen
+import com.samduka.dukacred.feature.invoicecapture.presentation.ui.ManualInvoiceEditScreen
 import org.koin.compose.koinInject
 
 @Composable
@@ -120,16 +124,43 @@ fun AppNavigation() {
                     }
                 )
             }
-            composable<AppRoute.InvoiceCapture> {
-                CaptureScreen(
-                    onClose = {
-                        navController.popBackStack()
+
+
+            composable<AppRoute.SmartAdjustment> { backStackEntry ->
+                val route: AppRoute.SmartAdjustment = backStackEntry.toRoute()
+
+                InvoiceReviewScreen(
+                    invoiceId = route.invoiceId,
+                    onBack = { navController.popBackStack() },
+                    onNavigateToManualEdit = { invoice ->
+                        navController.navigate(AppRoute.ManualInvoiceEdit(invoiceId = invoice.id ?: route.invoiceId))
                     },
-                    onNavigateToAdjustment = { invoiceId ->
-                        navController.navigate(AppRoute.SmartAdjustment(invoiceId)) {
-                            // Capture screen is done with its job once a draft is saved —
-                            // don't leave it on the back stack under the adjustment screen.
-                            popUpTo<AppRoute.InvoiceCapture> { inclusive = true }
+                    onNavigateToFinancingSuccess = { loanId ->
+                        navController.navigate(AppRoute.FinancingSuccess(loanId)) {
+                            // Don't leave Verification/Smart Adjustment on the back stack
+                            // under the success screen — same reasoning as the earlier
+                            // Capture -> SmartAdjustment popUpTo.
+                            popUpTo<AppRoute.SmartAdjustment> { inclusive = true }
+                        }
+                    },
+                )
+            }
+
+            composable<AppRoute.ManualInvoiceEdit> { backStackEntry ->
+                val route: AppRoute.ManualInvoiceEdit = backStackEntry.toRoute()
+                ManualInvoiceEditScreen(
+                    invoiceId = route.invoiceId,
+                    onBack = { navController.popBackStack() },
+                )
+            }
+
+            composable<AppRoute.FinancingSuccess> { backStackEntry ->
+                val route: AppRoute.FinancingSuccess = backStackEntry.toRoute()
+                FinancingSuccessScreen(
+                    loanId = route.loanId,
+                    onBackToDashboard = {
+                        navController.navigate(AppRoute.MerchantHome) {
+                            popUpTo<AppRoute.MerchantHome> { inclusive = true }
                         }
                     },
                 )
