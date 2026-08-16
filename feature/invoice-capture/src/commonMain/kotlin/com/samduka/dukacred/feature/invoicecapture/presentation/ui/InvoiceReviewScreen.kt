@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.samduka.dukacred.core.designsystem.components.DukaPrimaryButton
+import com.samduka.dukacred.core.designsystem.theme.*
 import com.samduka.dukacred.feature.invoicecapture.domain.ParsedInvoice
 import com.samduka.dukacred.feature.invoicecapture.presentation.InvoiceReviewEffect
 import com.samduka.dukacred.feature.invoicecapture.presentation.InvoiceReviewIntent
@@ -62,19 +63,63 @@ fun InvoiceReviewScreen(
         }
     }
 
-    when (val current = state) {
-        InvoiceReviewState.Evaluating -> EvaluatingState(modifier)
-        is InvoiceReviewState.FullApproval -> InvoiceVerificationScreen(
-            state = current, onIntent = viewModel::onIntent, onBack = onBack, modifier = modifier,
+    Box(modifier = modifier.fillMaxSize()) {
+        when (val current = state) {
+            InvoiceReviewState.Evaluating -> EvaluatingState(Modifier.fillMaxSize())
+            is InvoiceReviewState.FullApproval -> InvoiceVerificationScreen(
+                state = current, onIntent = viewModel::onIntent, onBack = onBack, modifier = Modifier.fillMaxSize(),
+            )
+            is InvoiceReviewState.PartialAdjustment -> SmartAdjustmentScreen(
+                state = current, onIntent = viewModel::onIntent, onBack = onBack, modifier = Modifier.fillMaxSize(),
+            )
+            is InvoiceReviewState.Error -> ReviewErrorState(
+                message = current.message,
+                onRetry = { viewModel.onIntent(InvoiceReviewIntent.Retry) },
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
+
+        RecheckingBanner(
+            visible = state.isRefreshing,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .statusBarsPadding()
+                .padding(top = 8.dp),
         )
-        is InvoiceReviewState.PartialAdjustment -> SmartAdjustmentScreen(
-            state = current, onIntent = viewModel::onIntent, onBack = onBack, modifier = modifier,
-        )
-        is InvoiceReviewState.Error -> ReviewErrorState(
-            message = current.message,
-            onRetry = { viewModel.onIntent(InvoiceReviewIntent.Retry) },
-            modifier = modifier,
-        )
+    }
+}
+
+@Composable
+private fun RecheckingBanner(visible: Boolean, modifier: Modifier = Modifier) {
+    androidx.compose.animation.AnimatedVisibility(
+        visible = visible,
+        enter = androidx.compose.animation.fadeIn() + androidx.compose.animation.slideInVertically { -it },
+        exit = androidx.compose.animation.fadeOut() + androidx.compose.animation.slideOutVertically { -it },
+        modifier = modifier,
+    ) {
+        androidx.compose.material3.Surface(
+            shape = MaterialTheme.dukaShapes.full,
+            color = Color.Black.copy(alpha = 0.75f),
+            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)),
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+            ) {
+                androidx.compose.material3.CircularProgressIndicator(
+                    modifier = Modifier.size(14.dp),
+                    color = MaterialTheme.colorScheme.primary,
+                    strokeWidth = 2.dp,
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    "Re-checking eligibility…",
+                    color = Color.White.copy(alpha = 0.9f),
+                    fontSize = 12.sp,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
+                )
+            }
+        }
     }
 }
 
